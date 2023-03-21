@@ -1,0 +1,18 @@
+{
+  "*.js": [
+    "eslint --fix",
+    "git add"
+  ],
+  "*.json": [
+    "prettier --write",
+    "git add"
+  ],
+  "*.vue": [
+    "eslint --fix",
+    "prettier --write",
+    "git add"
+  ],
+  "*.{js,json,vue}": [
+    "commitlint -E HUSKY_GIT_PARAMS"
+  ]
+}
