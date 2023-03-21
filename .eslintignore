@@ -1,8 +1,13 @@
-# # Common
-# node_modules
-# dist
-# .nuxt
-# coverage
+# Common
+node_modules
+dist
+.nuxt
+coverage
 
-# # Plugin
-# lib/plugin.js
+# Lib
+lib/module.plugin.js
+lib/module.js
+lib/module.middleware.js
+lib/module.utils.js
+lib/module.eventbus.js
+lib/compatibility.js
