@@ -21,11 +21,12 @@
     "format": "prettier './**/*.{js,ts,json,vue}' --write"
   },
   "devDependencies": {
+    "@apptus/esales-api": "^2.1.0",
     "jest": "^23.4.1",
     "nuxt": "^2.4.0",
     "prettier": "^1.16.1",
     "puppeteer": "^1.6.1",
-    "@apptus/esales-api": "^2.1.0"
+    "vue": "^2.7.14"
   },
   "jest": {
     "testEnvironment": "node",
