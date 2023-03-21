@@ -118,7 +118,7 @@ export default {
       // clearTimeout(this.isTypingTimeout);
       // this.isTypingTimeout = setTimeout(this.fetchResults(results), 500);
       await this.fetchResults();
-      this.$emit('search', this.$data);
+      this.$emit('voyadoSearchOnInput', this.$data);
     },
     getAllProducts() {
       const products = [];
@@ -130,13 +130,13 @@ export default {
       this.products = products;
     },
     onFocus() {
-      this.$emit('focus');
+      this.$emit('voyadoSearchOnFocus');
     },
     onBlur() {
-      this.$emit('blur');
+      this.$emit('voyadoSearchOnBlur');
     },
     onEnter() {
-      this.$emit('enter');
+      this.$emit('voyadoSearchOnEnter');
     }
   },
   destroy: {}

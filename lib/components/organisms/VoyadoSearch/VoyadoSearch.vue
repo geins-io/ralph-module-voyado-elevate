@@ -4,10 +4,10 @@
       <div class="voyado-search__bar">
         <VoyadoSearchForm
           class="voyado-search__form"
-          @search="onSearchResults"
-          @focus="open"
-          @blur="onBlur"
-          @enter="onEnter"
+          @voyadoSearchOnInput="onSearchInput"
+          @voyadoSearchOnFocus="onOpen"
+          @voyadoSearchOnBlur="onBlur"
+          @voyadoSearchOnEnter="onEnter"
         />
       </div>
       <!-- <div
@@ -204,16 +204,18 @@
         <button
           type="button"
           class="voyado-search__close-button only-mobile"
-          @click="close"
+          @click="onClose"
         >
-          <CaIconAndText icon-name="x">{{ $t('CLOSE') }}</CaIconAndText>
+          <CaIconAndText icon-name="x">
+            {{ $t('Close') }}
+          </CaIconAndText>
         </button>
       </section>
     </div>
     <CaOverlay
       class="voyado-search__overlay"
       :visible="isActive"
-      @clicked="close"
+      @clicked="onClose"
     />
   </div>
 </template>
@@ -235,7 +237,7 @@ export default {
   mixins: [],
   props: {
     // Used to toogle search in mobile, set to true when user opens it
-    opened: {
+    onOpened: {
       type: Boolean,
       default: false
     },
@@ -360,7 +362,7 @@ export default {
     //   ? JSON.parse(localStorage.getItem('recentSearches'))
     //   : [];
     eventbus.$on('route-change', () => {
-      this.close();
+      this.onClose();
     });
   },
   beforeDestroy() {
@@ -390,8 +392,8 @@ export default {
     // },
     // @vuese
     // Perform search
-    onSearchResults(results) {
-      console.log('VoyadoSearch: onSearchResults', results);
+    onSearchInput(results) {
+      console.log('VoyadoSearch: onSearchInput', results);
       this.isLoading = results.isLoading;
       this.noResults = results.noResults;
       this.searchQuery = results.searchQuery;
@@ -399,7 +401,7 @@ export default {
     onBlur(event) {
       this.$nextTick(() => {
         if (this.searchQuery === '') {
-          this.close();
+          this.onClose();
         }
       });
     },
@@ -408,15 +410,15 @@ export default {
         console.log('VoyadoSearch: onEnter', this.searchQuery.length);
         // this.setRecentSearch();
         this.$router.push(this.setSearchPageUrl);
-        this.$emit('searchRouteChange');
-        this.close();
+        this.$emit('voyadoSearchOnRouteChange');
+        this.onClose();
       }
     },
     // setSearchQuery(string) {
     //   this.searchQuery = string;
     //   this.fetchResults();
     // },
-    close() {
+    onClose() {
       // if (this.hasProductResults) {
       //   this.setRecentSearch();
       // }
@@ -425,9 +427,9 @@ export default {
       this.isActive = false;
       this.searchQuery = '';
       this.products = [];
-      this.$emit('closed');
+      this.$emit('voyadoSearchOnClose');
     },
-    open() {
+    onOpen() {
       if (!this.isActive) {
         this.isActive = true;
         this.$store.dispatch('setViewportHeight');
