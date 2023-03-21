@@ -7,7 +7,10 @@
       autocomplete="off"
       :aria-label="$t('SEARCH')"
       :placeholder="$t('SEARCH_PLACEHOLDER')"
-      @input="fetchResults"
+      @input="onSearchInput"
+      @focus="onFocus"
+      @blur="onBlur"
+      @keyup.enter="onEnter"
     />
     <!-- <input
       v-model="searchQuery"
@@ -16,7 +19,7 @@
       autocomplete="off"
       :aria-label="$t('SEARCH')"
       :placeholder="$t('SEARCH_PLACEHOLDER')"
-      @input="handleSearchInput"
+      @input="onSearchInput"
       @focus="open"
       @blur="blurHandler"
       @keyup.enter="goToSearchPage"
@@ -45,11 +48,12 @@ export default {
   props: {},
   data: () => ({
     searchQuery: '',
-    typingTimeout: null,
-    loading: false,
+    isTypingTimeout: null,
+    isLoading: false,
     products: [],
     primaryProductGroups: [],
-    noResults: false
+    noResults: false,
+    totalResults: 0
   }),
   computed: {
     hasProductResults() {
@@ -68,7 +72,7 @@ export default {
       });
     },
     async fetchResults() {
-      this.loading = true;
+      this.isLoading = true;
 
       if (this.searchQuery !== '') {
         try {
@@ -82,7 +86,7 @@ export default {
               results?.primaryList?.productGroups || [];
             this.products = this.getAllProducts();
             console.log(
-              'voyado: primaryProductGroups',
+              'VoyadoSearchForm: primaryProductGroups',
               this.primaryProductGroups
             );
           }
@@ -93,24 +97,26 @@ export default {
             this.noResults = true;
           }
 
-          this.loading = false;
+          this.isLoading = false;
 
-          console.log('voyado: results', results);
+          console.log('VoyadoSearchForm: results', results);
         } catch (error) {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
-          console.log('voyado: error', error);
+          console.log('VoyadoSearchForm: error', error);
         } finally {
-          this.loading = false;
+          this.isLoading = false;
         }
       } else {
         this.primaryProductGroups = [];
         this.products = [];
-        this.loading = false;
+        this.isLoading = false;
       }
     },
     // @vuese
     // Perform search
-    async handleSearchInput() {
+    async onSearchInput() {
+      // clearTimeout(this.isTypingTimeout);
+      // this.isTypingTimeout = setTimeout(this.fetchResults(results), 500);
       await this.fetchResults();
       this.$emit('search', this.$data);
     },
@@ -122,6 +128,15 @@ export default {
         });
       });
       this.products = products;
+    },
+    onFocus() {
+      this.$emit('focus');
+    },
+    onBlur() {
+      this.$emit('blur');
+    },
+    onEnter() {
+      this.$emit('enter');
     }
   },
   destroy: {}

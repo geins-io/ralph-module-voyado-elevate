@@ -4,11 +4,14 @@
       <div class="voyado-search__bar">
         <VoyadoSearchForm
           class="voyado-search__form"
-          @search="handleSearchInput"
+          @search="onSearchResults"
+          @focus="open"
+          @blur="onBlur"
+          @enter="onEnter"
         />
       </div>
       <!-- <div
-        v-if="!loading && active && !hasProductResults && !noResults"
+        v-if="!isLoading && isActive && !hasProductResults && !noResults"
         class="voyado-search__suggestions"
       >
         <h2 class="voyado-search__title voyado-search__title--suggestion">
@@ -34,7 +37,7 @@
         </p>
       </div> -->
       <!-- <div
-        v-else-if="active && !hasProductResults"
+        v-else-if="isActive && !hasProductResults"
         class="voyado-search__suggestions"
       >
         <h2 class="voyado-search__title voyado-search__title--suggestion">
@@ -52,15 +55,15 @@
       </div> -->
       <section
         v-if="
-          loading ||
+          isLoading ||
             (noResults && searchIsVisible) ||
             (hasProductResults && searchIsVisible)
         "
         class="voyado-search__results"
         :class="{
-          'voyado-search__results--loading': loading,
+          'voyado-search__results--loading': isLoading,
           'voyado-search__results--loading-empty':
-            loading && !hasProductResults,
+            isLoading && !hasProductResults,
           'voyado-search__results--no-results': noResults
         }"
       >
@@ -86,9 +89,12 @@
               :class="{
                 empty: !hasProductResults
               }"
-              :loading="loading"
+              :loading="isLoading"
             />
-            <div v-if="noResults && !loading" class="voyado-search__no-results">
+            <div
+              v-if="noResults && !isLoading"
+              class="voyado-search__no-results"
+            >
               {{ $t('SEARCH_NO_RESULTS') }}
             </div>
             <div
@@ -206,7 +212,7 @@
     </div>
     <CaOverlay
       class="voyado-search__overlay"
-      :visible="active"
+      :visible="isActive"
       @clicked="close"
     />
   </div>
@@ -240,9 +246,8 @@ export default {
   },
   data: () => ({
     searchQuery: '',
-    typingTimeout: null,
-    loading: false,
-    active: false,
+    isLoading: false,
+    isActive: false,
     products: [],
     primaryProductGroups: [],
     totalResults: 0,
@@ -252,7 +257,7 @@ export default {
     noResults: false
   }),
   computed: {
-    setSearchPageLink() {
+    setSearchPageUrl() {
       return (
         this.$getPath('index') +
         this.$config.routePaths.search +
@@ -286,7 +291,7 @@ export default {
     modifiers() {
       return {
         'voyado-search--visible': this.searchIsVisible,
-        'voyado-search--active': this.active
+        'voyado-search--active': this.isActive
       };
     },
     // showRecentSearches() {
@@ -385,46 +390,46 @@ export default {
     // },
     // @vuese
     // Perform search
-    handleSearchInput(results) {
-      console.log('voyado search handleSearchInput', results);
-      // this.loading = true;
-      // this.noResults = false;
-      // clearTimeout(this.typingTimeout);
-      // this.typingTimeout = setTimeout(this.fetchResults(results), 500);
+    onSearchResults(results) {
+      console.log('VoyadoSearch: onSearchResults', results);
+      this.isLoading = results.isLoading;
+      this.noResults = results.noResults;
+      this.searchQuery = results.searchQuery;
     },
-    blurHandler(event) {
+    onBlur(event) {
       this.$nextTick(() => {
         if (this.searchQuery === '') {
           this.close();
         }
       });
     },
-    goToSearchPage() {
-      if (this.searchQuery) {
+    onEnter() {
+      if (this.searchQuery.length) {
+        console.log('VoyadoSearch: onEnter', this.searchQuery.length);
         // this.setRecentSearch();
-        this.$router.push(this.setSearchPageLink);
+        this.$router.push(this.setSearchPageUrl);
         this.$emit('searchRouteChange');
         this.close();
       }
     },
-    setSearchQuery(string) {
-      this.searchQuery = string;
-      this.fetchResults();
-    },
+    // setSearchQuery(string) {
+    //   this.searchQuery = string;
+    //   this.fetchResults();
+    // },
     close() {
       // if (this.hasProductResults) {
       //   this.setRecentSearch();
       // }
       document.body.style.overflow = null;
       this.noResults = false;
-      this.active = false;
+      this.isActive = false;
       this.searchQuery = '';
       this.products = [];
       this.$emit('closed');
     },
     open() {
-      if (!this.active) {
-        this.active = true;
+      if (!this.isActive) {
+        this.isActive = true;
         this.$store.dispatch('setViewportHeight');
         this.$store.dispatch('setScrollbarWidth');
         document.body.style.overflow = 'hidden';
