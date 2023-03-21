@@ -11,3 +11,7 @@ lib/module.middleware.js
 lib/module.utils.js
 lib/module.eventbus.js
 lib/compatibility.js
+
+# Test
+test/fixture/nuxt.config.js
+test/system/module.test.js

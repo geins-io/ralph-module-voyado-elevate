@@ -1,5 +1,4 @@
 const resolve = require('path').resolve;
-
 const optionConfig = {};
 
 module.exports = {

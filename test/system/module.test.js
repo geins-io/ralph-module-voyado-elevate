@@ -1,11 +1,11 @@
 const puppeteer = require('puppeteer');
-const request = require('request-promise-native');
+// const request = require('request-promise-native');
 
 const { Nuxt, Builder } = require('nuxt');
 const config = require('../fixture/nuxt.config');
 
 const url = path => `http://localhost:3000${path}`;
-const get = path => request(url(path));
+// const get = path => request(url(path));
 
 jest.setTimeout(10000);
 
