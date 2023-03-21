@@ -411,15 +411,6 @@ export default {
       this.searchQuery = string;
       this.fetchResults();
     },
-    getAllProducts() {
-      const products = [];
-      this.primaryProductGroups.forEach(item => {
-        item.products.forEach(product => {
-          products.push(product);
-        });
-      });
-      this.products = products;
-    },
     close() {
       // if (this.hasProductResults) {
       //   this.setRecentSearch();
