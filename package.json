@@ -10,17 +10,6 @@
     "nuxt",
     "nuxt.js"
   ],
-  "contributors": [
-    {
-      "name": "{{ author }}"
-    },
-    {
-      "name": "fitzpatrick-geins"
-    }
-  ],
-  "files": [
-    "lib"
-  ],
   "main": "lib/module.js",
   "license": "MIT",
   "scripts": {
@@ -29,22 +18,15 @@
     "test:unit": "jest --testRegex \"/test/unit/(.+)\\.test\\.js$\"",
     "test:system": "jest --testRegex \"/test/system/(.+)\\.test\\.js$\"",
     "test:coverage": "yarn test --coverage",
-    "format": "prettier './**/*.{js,ts,json,vue}' --write",
-    "commit": "git-cz"
+    "format": "prettier './**/*.{js,ts,json,vue}' --write"
   },
   "devDependencies": {
     "@apptus/esales-api": "^2.1.0",
-    "@commitlint/cli": "^17.4.4",
-    "@commitlint/config-conventional": "^17.4.4",
-    "husky": "^8.0.3",
     "jest": "^23.4.1",
     "nuxt": "^2.4.0",
     "prettier": "^1.16.1",
     "puppeteer": "^1.6.1",
     "vue": "^2.7.14"
-  },
-  "dependencies": {
-    "consola": "^2.3.2"
   },
   "jest": {
     "testEnvironment": "node",
@@ -52,10 +34,7 @@
       "lib/**/*.{js,jsx}"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-    }
+  "dependencies": {
+    "consola": "^2.3.2"
   }
 }

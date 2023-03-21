@@ -23,9 +23,7 @@ describe('module E2E test', () => {
     }
     const createBrowser = async () => {
       browser = await puppeteer.launch({
-        args: [
-          '--no-sandbox'
-        ],
+        args: ['--no-sandbox'],
         headless: process.env.NODE_ENV !== 'development',
         timeout: 0
       })
