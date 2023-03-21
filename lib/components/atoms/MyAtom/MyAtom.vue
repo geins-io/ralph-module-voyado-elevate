@@ -1,7 +1,6 @@
-
 <template>
   <div class="my-atom">
-    <p>MyAtom</p>   
+    <p>MyAtom</p>
   </div>
 </template>
 
@@ -14,8 +13,8 @@ export default {
   computed: {},
   watch: {},
   mounted() {},
-  methods: {},
-  destroyed(){}
+  destroyed() {},
+  methods: {}
 };
 </script>
 <style lang="scss">
