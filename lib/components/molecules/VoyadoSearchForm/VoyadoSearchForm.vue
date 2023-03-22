@@ -1,7 +1,7 @@
 <template>
   <div class="voyado-search-form">
     <input
-      v-model="searchQuery"
+      v-model="localSearchQuery"
       class="voyado-search__input"
       type="search"
       autocomplete="off"
@@ -12,31 +12,19 @@
       @blur="onBlur"
       @keyup.enter="onEnter"
     />
-    <!-- <input
-      v-model="searchQuery"
-      class="voyado-search__input"
-      type="search"
-      autocomplete="off"
-      :aria-label="$t('SEARCH')"
-      :placeholder="$t('SEARCH_PLACEHOLDER')"
-      @input="onSearchInput"
-      @focus="open"
-      @blur="blurHandler"
-      @keyup.enter="goToSearchPage"
-    /> -->
-    <!-- <CaIconButton
-      v-if="searchQuery"
+    <CaIconButton
+      v-if="$data.localSearchQuery"
       class="voyado-search__remove"
       icon-name="x"
       aria-label="Delete"
-      @clicked="close"
+      @clicked="onClear"
     />
     <CaIconButton
       class="voyado-search__button"
       icon-name="search"
       :aria-label="$t('SEARCH')"
-      @clicked="goToSearchPage"
-    /> -->
+      @clicked="onSubmit"
+    />
   </div>
 </template>
 <script>
@@ -44,11 +32,14 @@ import { esales } from '@apptus/esales-api';
 
 export default {
   name: 'VoyadoSearchForm',
-  mixins: [],
-  props: {},
+  props: {
+    searchQuery: {
+      type: String,
+      default: ''
+    }
+  },
   data: () => ({
-    searchQuery: '',
-    isTypingTimeout: null,
+    // isTypingTimeout: null,
     isLoading: false,
     products: [],
     primaryProductGroups: [],
@@ -58,10 +49,16 @@ export default {
   computed: {
     hasProductResults() {
       return this.primaryProductGroups.length;
+    },
+    localSearchQuery: {
+      get() {
+        return this.searchQuery;
+      },
+      set(newVal) {
+        this.$data.localSearchQuery = newVal;
+      }
     }
   },
-  watch: {},
-  mounted() {},
   methods: {
     esalesApi() {
       return esales({
@@ -74,21 +71,21 @@ export default {
     async fetchResults() {
       this.isLoading = true;
 
-      if (this.searchQuery !== '') {
+      if (this.$data.localSearchQuery !== '') {
         try {
           const results = await this.esalesApi().query.searchPage({
-            q: this.searchQuery,
+            q: this.$data.localSearchQuery,
             limit: 60
           });
 
           if (results?.primaryList?.productGroups?.length) {
             this.primaryProductGroups =
               results?.primaryList?.productGroups || [];
-            this.products = this.getAllProducts();
-            console.log(
-              'VoyadoSearchForm: primaryProductGroups',
-              this.primaryProductGroups
-            );
+            this.getAllProducts();
+            // console.log(
+            //   'VoyadoSearchForm: primaryProductGroups',
+            //   this.primaryProductGroups
+            // );
           }
 
           if (this.hasProductResults) {
@@ -96,13 +93,10 @@ export default {
           } else {
             this.noResults = true;
           }
-
-          this.isLoading = false;
-
-          console.log('VoyadoSearchForm: results', results);
+          // console.log('VoyadoSearchForm: results', results);
         } catch (error) {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
-          console.log('VoyadoSearchForm: error', error);
+          // console.log('VoyadoSearchForm: error', error);
         } finally {
           this.isLoading = false;
         }
@@ -114,10 +108,12 @@ export default {
     },
     // @vuese
     // Perform search
-    async onSearchInput() {
+    onSearchInput() {
       // clearTimeout(this.isTypingTimeout);
       // this.isTypingTimeout = setTimeout(this.fetchResults(results), 500);
-      await this.fetchResults();
+      this.fetchResults();
+
+      console.log('VoyadoSearchForm: onSearchInput', this.products);
       this.$emit('voyadoSearchOnInput', this.$data);
     },
     getAllProducts() {
@@ -130,16 +126,21 @@ export default {
       this.products = products;
     },
     onFocus() {
-      this.$emit('voyadoSearchOnFocus');
+      this.$emit('voyadoSearchOnFocus', this.$data);
     },
     onBlur() {
-      this.$emit('voyadoSearchOnBlur');
+      this.$emit('voyadoSearchOnBlur', this.$data);
     },
     onEnter() {
-      this.$emit('voyadoSearchOnEnter');
+      this.$emit('voyadoSearchOnEnter', this.$data);
+    },
+    onClear() {
+      this.$emit('voyadoSearchOnClear', this.$data);
+    },
+    onSubmit() {
+      this.$emit('voyadoSearchOnSubmit', this.$data);
     }
-  },
-  destroy: {}
+  }
 };
 </script>
 <!-- <style lang="scss">

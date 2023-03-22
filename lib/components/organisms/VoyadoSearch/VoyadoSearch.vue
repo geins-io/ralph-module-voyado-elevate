@@ -4,55 +4,15 @@
       <div class="voyado-search__bar">
         <VoyadoSearchForm
           class="voyado-search__form"
+          :search-query.sync="searchQuery"
           @voyadoSearchOnInput="onSearchInput"
           @voyadoSearchOnFocus="onOpen"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
+          @voyadoSearchOnClear="onClear"
+          @voyadoSearchOnSubmit="onSubmit"
         />
       </div>
-      <!-- <div
-        v-if="!isLoading && isActive && !hasProductResults && !noResults"
-        class="voyado-search__suggestions"
-      >
-        <h2 class="voyado-search__title voyado-search__title--suggestion">
-          {{ $t('YOUR_RECENT_SEARCHES') }}
-        </h2>
-        <ul v-if="showRecentSearches" class="voyado-search__suggestions-list">
-          <li
-            v-for="(search, index) in recentSearches"
-            :key="index"
-            class="voyado-search__suggestion-item"
-          >
-            <button
-              type="button"
-              class="voyado-search__suggestion-link"
-              @mousedown="setSearchQuery(search)"
-            >
-              {{ search }}
-            </button>
-          </li>
-        </ul>
-        <p v-else class="voyado-search__no-suggestions">
-          {{ $t('SEARCH_NO_SUGGESTIONS') }}
-        </p>
-      </div> -->
-      <!-- <div
-        v-else-if="isActive && !hasProductResults"
-        class="voyado-search__suggestions"
-      >
-        <h2 class="voyado-search__title voyado-search__title--suggestion">
-          {{ $t('TOP_SEARCHES') }}
-        </h2>
-        <ul class="voyado-search__suggestions-list">
-          <li
-            v-for="(search, index) in topSearches"
-            :key="index"
-            class="voyado-search__suggestion-item"
-          >
-            <a href="#" class="voyado-search__suggestion-link">{{ search }}</a>
-          </li>
-        </ul>
-      </div> -->
       <section
         v-if="
           isLoading ||
@@ -72,7 +32,7 @@
             <h2 class="voyado-search__title">
               {{ $t('SEARCH_RESULTS_TITLE') }}
             </h2>
-            <button type="button" @click="goToSearchPage">
+            <button type="button" @click="visitSearchPage">
               <CaIconAndText
                 v-if="hasProductResults && totalResults > resultsToShow"
                 class="voyado-search__see-all"
@@ -85,6 +45,7 @@
           </div>
           <div class="voyado-search__results-wrap">
             <CaSpinner
+              v-if="isLoading"
               class="voyado-search__spinner"
               :class="{
                 empty: !hasProductResults
@@ -98,7 +59,7 @@
               {{ $t('SEARCH_NO_RESULTS') }}
             </div>
             <div
-              v-if="primaryProductGroups.length"
+              v-if="hasProductResults"
               class="voyado-search__result voyado-search__result--products"
             >
               <h3 class="voyado-search__list-title">
@@ -157,48 +118,6 @@
                 </ul>
               </div>
             </div>
-            <!-- <div
-              v-if="categoriesVisible.length"
-              class="voyado-search__result voyado-search__result--categories"
-            >
-              <h3 class="voyado-search__list-title">{{ $t('CATEGORIES') }}</h3>
-              <ul class="voyado-search__list">
-                <li
-                  v-for="(category, index) in categoriesVisible"
-                  :key="index"
-                  class="voyado-search__item voyado-search__item--tag"
-                >
-                  <NuxtLink
-                    class="voyado-search__item-link voyado-search__item-link--tag"
-                    :to="category.canonicalUrl"
-                    :title="category.name"
-                  >
-                    {{ category.name }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div> -->
-            <!-- <div
-              v-if="brandsVisible.length"
-              class="voyado-search__result voyado-search__result--brands"
-            >
-              <h3 class="voyado-search__list-title">{{ $t('BRANDS') }}</h3>
-              <ul class="voyado-search__list">
-                <li
-                  v-for="(brand, index) in brandsVisible"
-                  :key="index"
-                  class="voyado-search__item voyado-search__item--tag"
-                >
-                  <NuxtLink
-                    class="voyado-search__item-link voyado-search__item-link--tag"
-                    :to="brand.canonicalUrl"
-                    :title="brand.name"
-                  >
-                    {{ brand.name }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div> -->
           </div>
         </div>
         <button
@@ -220,20 +139,13 @@
   </div>
 </template>
 <script>
-// import searchQuery from 'global/search.graphql';
 import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
-// import eventbus from '@ralph/ralph-ui/plugins/eventbus.js';
-// const eventbus = require('ralph-module-voyado-elevate/lib/eventBus');
-// import { esales } from '@apptus/esales-api';
 
 // @group Molecules
 // The search including search results<br><br>
 // **SASS-path:** _./styles/components/molecules/voyado-search.scss_
 export default {
   name: 'VoyadoSearch',
-  components: {
-    // VoyadoSearchForm
-  },
   mixins: [],
   props: {
     // Used to toogle search in mobile, set to true when user opens it
@@ -247,24 +159,29 @@ export default {
     }
   },
   data: () => ({
-    searchQuery: '',
     isLoading: false,
     isActive: false,
     products: [],
     primaryProductGroups: [],
     totalResults: 0,
     searchStorage: null,
-    // recentSearches: [],
-    // topSearches: ['godis', 'askar', 'lakrits', 'choklad', 'present'],
     noResults: false
   }),
   computed: {
+    searchQuery: {
+      get() {
+        return this.$data.searchQuery;
+      },
+      set(newVal) {
+        this.$data.searchQuery = newVal;
+      }
+    },
     setSearchPageUrl() {
       return (
         this.$getPath('index') +
         this.$config.routePaths.search +
         '/' +
-        this.searchQuery
+        this.$data.searchQuery
       );
     },
     resultsToShow() {
@@ -296,71 +213,12 @@ export default {
         'voyado-search--active': this.isActive
       };
     },
-    // showRecentSearches() {
-    //   return this.recentSearches.length;
-    // },
     productsVisible() {
       return this.products.slice(0, this.resultsToShow);
-    }
-    // categoriesVisible() {
-    //   let arr = [];
-    //   this.products.forEach(item => {
-    //     item.categories.forEach(cat => {
-    //       arr.push(cat);
-    //     });
-    //   });
-    //   const collectedArr = [];
-    //   arr = arr.map(item => {
-    //     const index = collectedArr.findIndex(i => i.name === item.name);
-    //     if (index === -1) {
-    //       const obj = {
-    //         name: item.name,
-    //         canonicalUrl: item.canonicalUrl,
-    //         count: 1
-    //       };
-    //       collectedArr.push(obj);
-    //     } else {
-    //       collectedArr[index].count++;
-    //     }
-    //   });
-    //   return collectedArr
-    //     .sort((a, b) => b.count - a.count)
-    //     .slice(0, this.resultsToShow);
-    // },
-    // brandsVisible() {
-    //   let arr = [];
-    //   this.products.forEach(item => {
-    //     arr.push(item.brand);
-    //   });
-    //   const collectedArr = [];
-    //   arr = arr.map(item => {
-    //     const index = collectedArr.findIndex(i => i.name === item.name);
-    //     if (index === -1) {
-    //       const obj = {
-    //         name: item.name,
-    //         canonicalUrl: item.canonicalUrl,
-    //         count: 1
-    //       };
-    //       collectedArr.push(obj);
-    //     } else {
-    //       collectedArr[index].count++;
-    //     }
-    //   });
-    //   return collectedArr
-    //     .sort((a, b) => b.count - a.count)
-    //     .slice(0, this.resultsToShow);
-    // }
-  },
-  watch: {
-    primaryProductGroups(val) {
-      console.log('voyado search primaryProductGroups changed', val);
     }
   },
   mounted() {
     this.searchStorage = window.localStorage;
-    // this.recentSearches = this.searchStorage.getItem('recentSearches')
-    //   ? JSON.parse(localStorage.getItem('recentSearches'))
-    //   : [];
     eventbus.$on('route-change', () => {
       this.onClose();
     });
@@ -369,64 +227,55 @@ export default {
     eventbus.$off('route-change');
   },
   methods: {
-    // setRecentSearch() {
-    //   if (this.searchQuery === '') {
-    //     return;
-    //   }
-    //   if (this.recentSearches.includes(this.searchQuery)) {
-    //     this.recentSearches.splice(
-    //       this.recentSearches.indexOf(this.searchQuery),
-    //       1
-    //     );
-    //     this.recentSearches.unshift(this.searchQuery);
-    //   } else {
-    //     this.recentSearches.unshift(this.searchQuery);
-    //     if (this.recentSearches.length > 5) {
-    //       this.recentSearches.pop();
-    //     }
-    //   }
-    //   this.searchStorage.setItem(
-    //     'recentSearches',
-    //     JSON.stringify(this.recentSearches)
-    //   );
-    // },
-    // @vuese
-    // Perform search
-    onSearchInput(results) {
-      console.log('VoyadoSearch: onSearchInput', results);
-      this.isLoading = results.isLoading;
-      this.noResults = results.noResults;
-      this.searchQuery = results.searchQuery;
+    visitSearchPage() {
+      this.$router.push(this.setSearchPageUrl);
+      this.$emit('voyadoSearchOnRouteChange');
     },
-    onBlur(event) {
+    updateSearchQuery(newVal) {
+      this.$data.searchQuery = newVal;
+    },
+    onSearchInput(data) {
+      console.log('VoyadoSearch: onSearchInput', data);
+      this.isLoading = data.isLoading;
+      this.noResults = data.noResults;
+      this.products = data.products;
+      this.primaryProductGroups = data.primaryProductGroups;
+      this.totalResults = data.totalResults;
+      this.updateSearchQuery(data.localSearchQuery);
+    },
+    onBlur() {
       this.$nextTick(() => {
-        if (this.searchQuery === '') {
+        if (this.$data.searchQuery === '') {
           this.onClose();
         }
       });
     },
     onEnter() {
-      if (this.searchQuery.length) {
-        console.log('VoyadoSearch: onEnter', this.searchQuery.length);
-        // this.setRecentSearch();
-        this.$router.push(this.setSearchPageUrl);
-        this.$emit('voyadoSearchOnRouteChange');
+      if (this.$data.searchQuery.length) {
+        console.log('VoyadoSearch: onEnter', this.$data.searchQuery.length);
+        this.visitSearchPage();
         this.onClose();
       }
     },
-    // setSearchQuery(string) {
-    //   this.searchQuery = string;
-    //   this.fetchResults();
-    // },
+    onSubmit() {
+      if (this.$data.searchQuery.length) {
+        console.log('VoyadoSearch: onSubmit', this.$data.searchQuery.length);
+        this.visitSearchPage();
+        this.onClose();
+      }
+    },
+    onClear() {
+      if (this.$data.searchQuery.length) {
+        console.log('VoyadoSearch: onClear', this.$data.searchQuery.length);
+        this.updateSearchQuery('');
+      }
+    },
     onClose() {
-      // if (this.hasProductResults) {
-      //   this.setRecentSearch();
-      // }
       document.body.style.overflow = null;
       this.noResults = false;
       this.isActive = false;
-      this.searchQuery = '';
       this.products = [];
+      this.updateSearchQuery('');
       this.$emit('voyadoSearchOnClose');
     },
     onOpen() {
