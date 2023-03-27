@@ -1,7 +1,7 @@
 <template>
   <div class="voyado-search-form">
     <input
-      v-model="localSearchQuery"
+      v-model="searchInput"
       class="voyado-search__input"
       type="search"
       autocomplete="off"
@@ -13,7 +13,7 @@
       @keyup.enter="onEnter"
     />
     <CaIconButton
-      v-if="$data.localSearchQuery"
+      v-if="localSearchQuery.length"
       class="voyado-search__remove"
       icon-name="x"
       aria-label="Delete"
@@ -39,23 +39,23 @@ export default {
     }
   },
   data: () => ({
-    // isTypingTimeout: null,
     isLoading: false,
     products: [],
     primaryProductGroups: [],
     noResults: false,
-    totalResults: 0
+    totalResults: 0,
+    localSearchQuery: ''
   }),
   computed: {
     hasProductResults() {
       return this.primaryProductGroups.length;
     },
-    localSearchQuery: {
+    searchInput: {
       get() {
         return this.searchQuery;
       },
       set(newVal) {
-        this.$data.localSearchQuery = newVal;
+        this.$emit('update:searchQuery', newVal);
       }
     }
   },
@@ -70,11 +70,12 @@ export default {
     },
     async fetchResults() {
       this.isLoading = true;
+      // console.log('VoyadoSearchForm: fetchResults', this.localSearchQuery);
 
-      if (this.$data.localSearchQuery !== '') {
+      if (this.localSearchQuery.length) {
         try {
           const results = await this.esalesApi().query.searchPage({
-            q: this.$data.localSearchQuery,
+            q: this.localSearchQuery,
             limit: 60
           });
 
@@ -108,13 +109,13 @@ export default {
     },
     // @vuese
     // Perform search
-    onSearchInput() {
-      // clearTimeout(this.isTypingTimeout);
-      // this.isTypingTimeout = setTimeout(this.fetchResults(results), 500);
-      this.fetchResults();
-
-      console.log('VoyadoSearchForm: onSearchInput', this.products);
-      this.$emit('voyadoSearchOnInput', this.$data);
+    onSearchInput(input) {
+      this.$nextTick(() => {
+        this.localSearchQuery += input.data;
+        this.fetchResults();
+        this.$emit('voyadoSearchOnInput', this.$data);
+        console.log('VoyadoSearchForm: onSearchInput', this.localSearchQuery);
+      });
     },
     getAllProducts() {
       const products = [];
@@ -143,7 +144,3 @@ export default {
   }
 };
 </script>
-<!-- <style lang="scss">
-.voyado-search-form {
-}
-</style> -->
