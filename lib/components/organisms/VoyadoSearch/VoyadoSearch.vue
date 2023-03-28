@@ -10,7 +10,6 @@
           :is-loading.sync="isLoading"
           :no-results.sync="noResults"
           :total-results.sync="totalResults"
-          @voyadoSearchOnInput="onSearchInput"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
@@ -136,19 +135,11 @@ export default {
     eventbus.$off('route-change');
   },
   methods: {
-    onSearchInput(data) {
-      console.log('VoyadoSearch: onSearchInput', data);
-    },
     visitSearchPage() {
-      console.log(
-        'VoyadoSearchResults: visitSearchPage',
-        this.setSearchPageUrl
-      );
       this.$router.push(this.setSearchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
     },
     onBlur() {
-      console.log('VoyadoSearch: onBlur');
       this.$nextTick(() => {
         if (this.searchQuery === '') {
           this.onClose();
@@ -156,24 +147,22 @@ export default {
       });
     },
     onEnter() {
-      console.log('VoyadoSearch: onEnter');
       if (this.searchQuery.length) {
         this.visitSearchPage();
         this.onClose();
       }
     },
     onSubmit() {
-      console.log('VoyadoSearch: onSubmit');
       if (this.searchQuery.length) {
         this.visitSearchPage();
         this.onClose();
       }
     },
     onClear() {
-      console.log('VoyadoSearch: onClear');
+      this.searchQuery = '';
+      this.products = [];
     },
     onFocus() {
-      console.log('VoyadoSearch: onFocus');
       if (!this.isActive) {
         this.isActive = true;
         this.$store.dispatch('setViewportHeight');
@@ -182,17 +171,12 @@ export default {
       }
     },
     onClose() {
-      console.log('VoyadoSearch: onClose');
       document.body.style.overflow = null;
       this.noResults = false;
       this.isActive = false;
-      this.products = [];
-      this.searchQuery = '';
+      this.onClear();
       this.$emit('voyadoSearchOnClose');
     }
   }
 };
 </script>
-<style lang="scss">
-// @import 'molecules/voyado-search';
-</style>

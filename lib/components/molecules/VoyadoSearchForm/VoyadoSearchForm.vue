@@ -13,6 +13,13 @@
       @keyup.enter="onEnter"
     />
     <CaIconButton
+      v-if="searchQuery.length"
+      class="ca-search__remove"
+      icon-name="x"
+      aria-label="Delete"
+      @clicked="onClear"
+    />
+    <CaIconButton
       class="voyado-search__button"
       icon-name="search"
       :aria-label="$t('SEARCH')"

@@ -82,10 +82,6 @@ export default {
   },
   methods: {
     visitSearchPage() {
-      console.log(
-        'VoyadoSearchResults: visitSearchPage',
-        this.setSearchPageUrl
-      );
       this.$router.push(this.setSearchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
     }
