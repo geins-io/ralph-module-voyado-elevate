@@ -29,10 +29,13 @@ export default {
     searchQuery: {
       type: String,
       default: ''
+    },
+    isLoading: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
-    isLoading: false,
     products: [],
     primaryProductGroups: [],
     noResults: false,
@@ -62,8 +65,8 @@ export default {
       });
     },
     async fetchResults() {
-      this.isLoading = true;
-      // console.log('VoyadoSearchForm: fetchResults', this.$data.localSearchQuery);
+      this.$emit('update:isLoading', true);
+      // console.log('VoyadoSearchForm: fetchResults', this.isLoading);
 
       if (this.$data.localSearchQuery.length) {
         try {
@@ -92,12 +95,12 @@ export default {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
           // console.log('VoyadoSearchForm: error', error);
         } finally {
-          this.isLoading = false;
+          this.$emit('update:isLoading', false);
         }
       } else {
         this.primaryProductGroups = [];
         this.products = [];
-        this.isLoading = false;
+        this.$emit('update:isLoading', false);
         this.onClear();
       }
     },

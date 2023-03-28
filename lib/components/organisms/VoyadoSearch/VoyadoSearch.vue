@@ -5,8 +5,9 @@
         <VoyadoSearchForm
           class="voyado-search__form"
           :search-query.sync="searchQuery"
+          :is-loading.sync="isLoading"
           @voyadoSearchOnInput="onSearchInput"
-          @voyadoSearchOnFocus="onOpen"
+          @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
           @voyadoSearchOnClear="onClear"
@@ -27,99 +28,13 @@
           'voyado-search__results--no-results': noResults
         }"
       >
-        <div class="voyado-search__results-box">
-          <div class="voyado-search__top">
-            <h2 class="voyado-search__title">
-              {{ $t('SEARCH_RESULTS_TITLE') }}
-            </h2>
-            <button type="button" @click="visitSearchPage">
-              <CaIconAndText
-                v-if="hasProductResults && totalResults > resultsToShow"
-                class="voyado-search__see-all"
-                icon-name="arrow-right"
-                icon-position="right"
-              >
-                {{ $t('SEARCH_RESULTS_SEE_ALL') }}
-              </CaIconAndText>
-            </button>
-          </div>
-          <div class="voyado-search__results-wrap">
-            <CaSpinner
-              v-if="isLoading"
-              class="voyado-search__spinner"
-              :class="{
-                empty: !hasProductResults
-              }"
-              :loading="isLoading"
-            />
-            <div
-              v-if="noResults && !isLoading"
-              class="voyado-search__no-results"
-            >
-              {{ $t('SEARCH_NO_RESULTS') }}
-            </div>
-            <div
-              v-if="hasProductResults"
-              class="voyado-search__result voyado-search__result--products"
-            >
-              <h3 class="voyado-search__list-title">
-                {{ $tc('PRODUCT', 2) }}
-              </h3>
-              <div
-                v-for="productGroup in primaryProductGroups"
-                :key="productGroup.key"
-              >
-                <ul
-                  v-if="productGroup.products.length"
-                  class="voyado-search__list voyado-search__list--primary"
-                >
-                  <li
-                    v-for="product in productGroup.products"
-                    :key="product.key"
-                    class="voyado-search__item voyado-search__item--product"
-                  >
-                    <!-- <NuxtLink
-                      class="voyado-search__item-link voyado-search__item-link--product"
-                      :to="product.canonicalUrl"
-                      :title="product.name"
-                    > -->
-                    <div class="voyado-search__item-image">
-                      <CaImage
-                        v-if="product.imageInfo.thumbnail"
-                        class="voyado-search__item-image"
-                        type="product"
-                        :ratio="$config.productImageRatio"
-                        :src="product.imageInfo.thumbnail"
-                        :alt="product.title"
-                        sizes="40px"
-                      />
-                      <CaImage
-                        v-else
-                        class="voyado-search__item-image"
-                        :ratio="$config.productImageRatio"
-                        :src="
-                          require('~/assets/placeholders/product-image-square.png')
-                        "
-                        alt="placeholder"
-                      />
-                    </div>
-                    <div class="voyado-search__item-info">
-                      <div class="voyado-search__item-name">
-                        {{ product.title }}
-                      </div>
-                      <div class="voyado-search__price">
-                        <span class="voyado-search____selling">
-                          {{ product.sellingPrice.min }}
-                        </span>
-                      </div>
-                    </div>
-                    <!-- </NuxtLink> -->
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        <VoyadoSearchResults
+          :products="products"
+          :total-results="totalResults"
+          :is-loading="isLoading"
+          :search-query="searchQuery"
+          :has-products="hasProductResults"
+        />
         <button
           type="button"
           class="voyado-search__close-button only-mobile"
@@ -176,19 +91,8 @@ export default {
         this.$data.searchQuery = newVal;
       }
     },
-    setSearchPageUrl() {
-      return (
-        this.$getPath('index') +
-        this.$config.routePaths.search +
-        '/' +
-        this.$data.searchQuery
-      );
-    },
-    resultsToShow() {
-      return this.$store.getters.viewport === 'phone' ? 5 : 10;
-    },
     hasProductResults() {
-      return this.primaryProductGroups.length;
+      return !!this.products.length;
     },
     searchIsVisible() {
       if (this.visibleWhenSiteIsAtTop) {
@@ -215,6 +119,14 @@ export default {
     },
     productsVisible() {
       return this.products.slice(0, this.resultsToShow);
+    },
+    setSearchPageUrl() {
+      return (
+        this.$getPath('index') +
+        this.$config.routePaths.search +
+        '/' +
+        this.$data.searchQuery
+      );
     }
   },
   mounted() {
@@ -227,23 +139,24 @@ export default {
     eventbus.$off('route-change');
   },
   methods: {
-    visitSearchPage() {
-      this.$router.push(this.setSearchPageUrl);
-      this.$emit('voyadoSearchOnRouteChange');
-    },
-    updateSearchQuery(newVal) {
-      this.$data.searchQuery = newVal;
-    },
     onSearchInput(data) {
       console.log('VoyadoSearch: onSearchInput', data);
-      this.isLoading = data.isLoading;
       this.noResults = data.noResults;
       this.products = data.products;
       this.primaryProductGroups = data.primaryProductGroups;
       this.totalResults = data.totalResults;
-      this.updateSearchQuery(data.localSearchQuery);
+      this.$data.searchQuery = data.localSearchQuery;
+    },
+    visitSearchPage() {
+      console.log(
+        'VoyadoSearchResults: visitSearchPage',
+        this.setSearchPageUrl
+      );
+      this.$router.push(this.setSearchPageUrl);
+      this.$emit('voyadoSearchOnRouteChange');
     },
     onBlur() {
+      console.log('VoyadoSearch: onBlur');
       this.$nextTick(() => {
         if (this.$data.searchQuery === '') {
           this.onClose();
@@ -251,40 +164,39 @@ export default {
       });
     },
     onEnter() {
+      console.log('VoyadoSearch: onEnter');
       if (this.$data.searchQuery.length) {
-        console.log('VoyadoSearch: onEnter', this.$data.searchQuery.length);
         this.visitSearchPage();
         this.onClose();
       }
     },
     onSubmit() {
+      console.log('VoyadoSearch: onSubmit');
       if (this.$data.searchQuery.length) {
-        console.log('VoyadoSearch: onSubmit', this.$data.searchQuery.length);
         this.visitSearchPage();
         this.onClose();
       }
     },
     onClear() {
-      if (this.$data.searchQuery.length) {
-        console.log('VoyadoSearch: onClear', this.$data.searchQuery.length);
-        this.updateSearchQuery('');
-      }
+      console.log('VoyadoSearch: onClear');
     },
-    onClose() {
-      document.body.style.overflow = null;
-      this.noResults = false;
-      this.isActive = false;
-      this.products = [];
-      this.updateSearchQuery('');
-      this.$emit('voyadoSearchOnClose');
-    },
-    onOpen() {
+    onFocus() {
+      console.log('VoyadoSearch: onFocus');
       if (!this.isActive) {
         this.isActive = true;
         this.$store.dispatch('setViewportHeight');
         this.$store.dispatch('setScrollbarWidth');
         document.body.style.overflow = 'hidden';
       }
+    },
+    onClose() {
+      console.log('VoyadoSearch: onClose');
+      document.body.style.overflow = null;
+      this.noResults = false;
+      this.isActive = false;
+      this.products = [];
+      this.$data.searchQuery = '';
+      this.$emit('voyadoSearchOnClose');
     }
   }
 };
