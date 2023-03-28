@@ -5,7 +5,11 @@
         <VoyadoSearchForm
           class="voyado-search__form"
           :search-query.sync="searchQuery"
+          :primary-product-groups.sync="primaryProductGroups"
+          :products.sync="products"
           :is-loading.sync="isLoading"
+          :no-results.sync="noResults"
+          :total-results.sync="totalResults"
           @voyadoSearchOnInput="onSearchInput"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
@@ -74,6 +78,7 @@ export default {
     }
   },
   data: () => ({
+    searchQuery: '',
     isLoading: false,
     isActive: false,
     products: [],
@@ -83,14 +88,6 @@ export default {
     noResults: false
   }),
   computed: {
-    searchQuery: {
-      get() {
-        return this.$data.searchQuery;
-      },
-      set(newVal) {
-        this.$data.searchQuery = newVal;
-      }
-    },
     hasProductResults() {
       return !!this.products.length;
     },
@@ -125,7 +122,7 @@ export default {
         this.$getPath('index') +
         this.$config.routePaths.search +
         '/' +
-        this.$data.searchQuery
+        this.searchQuery
       );
     }
   },
@@ -141,11 +138,6 @@ export default {
   methods: {
     onSearchInput(data) {
       console.log('VoyadoSearch: onSearchInput', data);
-      this.noResults = data.noResults;
-      this.products = data.products;
-      this.primaryProductGroups = data.primaryProductGroups;
-      this.totalResults = data.totalResults;
-      this.$data.searchQuery = data.localSearchQuery;
     },
     visitSearchPage() {
       console.log(
@@ -158,21 +150,21 @@ export default {
     onBlur() {
       console.log('VoyadoSearch: onBlur');
       this.$nextTick(() => {
-        if (this.$data.searchQuery === '') {
+        if (this.searchQuery === '') {
           this.onClose();
         }
       });
     },
     onEnter() {
       console.log('VoyadoSearch: onEnter');
-      if (this.$data.searchQuery.length) {
+      if (this.searchQuery.length) {
         this.visitSearchPage();
         this.onClose();
       }
     },
     onSubmit() {
       console.log('VoyadoSearch: onSubmit');
-      if (this.$data.searchQuery.length) {
+      if (this.searchQuery.length) {
         this.visitSearchPage();
         this.onClose();
       }
@@ -195,7 +187,7 @@ export default {
       this.noResults = false;
       this.isActive = false;
       this.products = [];
-      this.$data.searchQuery = '';
+      this.searchQuery = '';
       this.$emit('voyadoSearchOnClose');
     }
   }

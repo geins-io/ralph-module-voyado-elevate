@@ -28,19 +28,27 @@ export default {
   props: {
     searchQuery: {
       type: String,
+      required: true,
       default: ''
+    },
+    primaryProductGroups: {
+      type: Array,
+      required: true,
+      default: () => []
+    },
+    products: {
+      type: Array,
+      default: () => []
     },
     isLoading: {
       type: Boolean,
       default: false
+    },
+    totalResults: {
+      type: Number,
+      default: 0
     }
   },
-  data: () => ({
-    products: [],
-    primaryProductGroups: [],
-    noResults: false,
-    totalResults: 0
-  }),
   computed: {
     hasProductResults() {
       return this.primaryProductGroups.length;
@@ -50,7 +58,6 @@ export default {
         return this.searchQuery;
       },
       set(newVal) {
-        this.$data.localSearchQuery = newVal;
         this.$emit('update:searchQuery', newVal);
       }
     }
@@ -66,40 +73,35 @@ export default {
     },
     async fetchResults() {
       this.$emit('update:isLoading', true);
-      // console.log('VoyadoSearchForm: fetchResults', this.isLoading);
 
-      if (this.$data.localSearchQuery.length) {
+      if (this.searchQuery.length) {
         try {
           const results = await this.esalesApi().query.searchPage({
-            q: this.$data.localSearchQuery,
+            q: this.searchQuery,
             limit: 60
           });
 
           if (results?.primaryList?.productGroups?.length) {
-            this.primaryProductGroups =
-              results?.primaryList?.productGroups || [];
+            this.$emit(
+              'update:primaryProductGroups',
+              results?.primaryList?.productGroups || []
+            );
             this.getAllProducts();
-            // console.log(
-            //   'VoyadoSearchForm: primaryProductGroups',
-            //   this.primaryProductGroups
-            // );
           }
 
           if (this.hasProductResults) {
-            this.totalResults = results.primaryList.totalHits;
+            this.$emit('update:totalResults', results.primaryList.totalHits);
           } else {
-            this.noResults = true;
+            this.$emit('update:noResults', true);
           }
-          // console.log('VoyadoSearchForm: results', results);
         } catch (error) {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
-          // console.log('VoyadoSearchForm: error', error);
         } finally {
           this.$emit('update:isLoading', false);
         }
       } else {
-        this.primaryProductGroups = [];
-        this.products = [];
+        this.$emit('update:primaryProductGroups', []);
+        this.$emit('update:products', []);
         this.$emit('update:isLoading', false);
         this.onClear();
       }
@@ -110,10 +112,6 @@ export default {
       this.$nextTick(() => {
         this.fetchResults();
         this.$emit('voyadoSearchOnInput', this.$data);
-        // console.log(
-        //   'VoyadoSearchForm: onSearchInput',
-        //   this.$data.localSearchQuery
-        // );
       });
     },
     getAllProducts() {
@@ -123,7 +121,7 @@ export default {
           products.push(product);
         });
       });
-      this.products = products;
+      this.$emit('update:products', products);
     },
     onFocus() {
       this.$emit('voyadoSearchOnFocus', this.$data);
