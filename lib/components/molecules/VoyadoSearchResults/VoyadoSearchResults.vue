@@ -34,45 +34,7 @@
         {{ $t('SEARCH_NO_RESULTS') }}
       </div>
       <div v-if="hasProducts" class="voyado-search-results__results">
-        <!-- <VoyadoSearchResultsList v-if="hasProducts" :products="products" /> -->
-        <ul
-          class="voyado-search-results__list voyado-search-results__list--primary"
-        >
-          <li
-            v-for="product in products"
-            :key="product.key"
-            class="voyado-search-results__item voyado-search-results__item--product"
-          >
-            <div class="voyado-search-results__item-image">
-              <CaImage
-                v-if="product.imageInfo.thumbnail"
-                class="voyado-search-results__item-image"
-                type="product"
-                :ratio="$config.productImageRatio"
-                :src="product.imageInfo.thumbnail"
-                :alt="product.title"
-                sizes="40px"
-              />
-              <CaImage
-                v-else
-                class="voyado-search-results__item-image"
-                :ratio="$config.productImageRatio"
-                :src="require('~/assets/placeholders/product-image-square.png')"
-                alt="placeholder"
-              />
-            </div>
-            <div class="voyado-search-results__item-info">
-              <div class="voyado-search-results__item-name">
-                {{ product.title }}
-              </div>
-              <div class="voyado-search-results__price">
-                <span class="voyado-search-results____selling">
-                  {{ product.sellingPrice.min }}
-                </span>
-              </div>
-            </div>
-          </li>
-        </ul>
+        <VoyadoSearchResultsList :products="products" />
       </div>
     </div>
   </div>
@@ -105,7 +67,6 @@ export default {
       default: false
     }
   },
-  data: () => ({}),
   computed: {
     resultsToShow() {
       return this.$store.getters.viewport === 'phone' ? 5 : 10;
