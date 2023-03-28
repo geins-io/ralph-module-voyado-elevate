@@ -1,7 +1,7 @@
 <template>
   <div class="voyado-search-form">
     <input
-      v-model="searchInput"
+      v-model="localSearchQuery"
       class="voyado-search__input"
       type="search"
       autocomplete="off"
@@ -11,13 +11,6 @@
       @focus="onFocus"
       @blur="onBlur"
       @keyup.enter="onEnter"
-    />
-    <CaIconButton
-      v-if="localSearchQuery.length"
-      class="voyado-search__remove"
-      icon-name="x"
-      aria-label="Delete"
-      @clicked="onClear"
     />
     <CaIconButton
       class="voyado-search__button"
@@ -43,18 +36,18 @@ export default {
     products: [],
     primaryProductGroups: [],
     noResults: false,
-    totalResults: 0,
-    localSearchQuery: ''
+    totalResults: 0
   }),
   computed: {
     hasProductResults() {
       return this.primaryProductGroups.length;
     },
-    searchInput: {
+    localSearchQuery: {
       get() {
         return this.searchQuery;
       },
       set(newVal) {
+        this.$data.localSearchQuery = newVal;
         this.$emit('update:searchQuery', newVal);
       }
     }
@@ -70,12 +63,12 @@ export default {
     },
     async fetchResults() {
       this.isLoading = true;
-      // console.log('VoyadoSearchForm: fetchResults', this.localSearchQuery);
+      // console.log('VoyadoSearchForm: fetchResults', this.$data.localSearchQuery);
 
-      if (this.localSearchQuery.length) {
+      if (this.$data.localSearchQuery.length) {
         try {
           const results = await this.esalesApi().query.searchPage({
-            q: this.localSearchQuery,
+            q: this.$data.localSearchQuery,
             limit: 60
           });
 
@@ -105,16 +98,19 @@ export default {
         this.primaryProductGroups = [];
         this.products = [];
         this.isLoading = false;
+        this.onClear();
       }
     },
     // @vuese
     // Perform search
-    onSearchInput(input) {
+    onSearchInput() {
       this.$nextTick(() => {
-        this.localSearchQuery += input.data;
         this.fetchResults();
         this.$emit('voyadoSearchOnInput', this.$data);
-        console.log('VoyadoSearchForm: onSearchInput', this.localSearchQuery);
+        // console.log(
+        //   'VoyadoSearchForm: onSearchInput',
+        //   this.$data.localSearchQuery
+        // );
       });
     },
     getAllProducts() {
