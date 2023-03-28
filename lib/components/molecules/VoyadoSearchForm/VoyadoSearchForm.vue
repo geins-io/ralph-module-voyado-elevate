@@ -1,30 +1,32 @@
 <template>
   <div class="voyado-search-form">
-    <input
-      v-model="localSearchQuery"
-      class="voyado-search__input"
-      type="search"
-      autocomplete="off"
-      :aria-label="$t('SEARCH')"
-      :placeholder="$t('SEARCH_PLACEHOLDER')"
-      @input="onSearchInput"
-      @focus="onFocus"
-      @blur="onBlur"
-      @keyup.enter="onEnter"
-    />
-    <CaIconButton
-      v-if="searchQuery.length"
-      class="ca-search__remove"
-      icon-name="x"
-      aria-label="Delete"
-      @clicked="onClear"
-    />
-    <CaIconButton
-      class="voyado-search__button"
-      icon-name="search"
-      :aria-label="$t('SEARCH')"
-      @clicked="onSubmit"
-    />
+    <div class="voyado-search-form__input-wrap">
+      <input
+        v-model="localSearchQuery"
+        class="voyado-search-form__input"
+        type="search"
+        autocomplete="off"
+        :aria-label="$t('SEARCH')"
+        :placeholder="$t('SEARCH_PLACEHOLDER')"
+        @input="onSearchInput"
+        @focus="onFocus"
+        @blur="onBlur"
+        @keyup.enter="onEnter"
+      />
+      <CaIconButton
+        v-if="searchQuery.length"
+        class="ca-search__remove"
+        icon-name="x"
+        aria-label="Delete"
+        @clicked="onClear"
+      />
+      <CaIconButton
+        class="voyado-search-form__button"
+        icon-name="search"
+        :aria-label="$t('SEARCH')"
+        @clicked="onSubmit"
+      />
+    </div>
   </div>
 </template>
 <script>
@@ -98,8 +100,7 @@ export default {
 
           if (this.hasProductResults) {
             this.$emit('update:totalResults', results.primaryList.totalHits);
-          } else {
-            this.$emit('update:noResults', true);
+            this.$emit('update:noResults', false);
           }
         } catch (error) {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
@@ -107,6 +108,7 @@ export default {
           this.$emit('update:isLoading', false);
         }
       } else {
+        this.$emit('update:noResults', true);
         this.$emit('update:primaryProductGroups', []);
         this.$emit('update:products', []);
         this.$emit('update:isLoading', false);

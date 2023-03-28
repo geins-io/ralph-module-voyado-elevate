@@ -33,7 +33,10 @@
       >
         {{ $t('SEARCH_NO_RESULTS') }}
       </div>
-      <div v-if="hasProducts" class="voyado-search-results__results">
+      <div
+        v-if="hasProducts"
+        class="voyado-search-results__results voyado-search-results__results--products"
+      >
         <VoyadoSearchResultsList :products="products" />
       </div>
     </div>
