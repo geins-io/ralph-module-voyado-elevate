@@ -6,8 +6,8 @@
         class="voyado-search-form__input"
         type="search"
         autocomplete="off"
-        :aria-label="$t('SEARCH')"
-        :placeholder="$t('SEARCH_PLACEHOLDER')"
+        :aria-label="$t('VOYADO_SEARCH')"
+        :placeholder="$t('VOYADO_SEARCH_PLACEHOLDER')"
         @input="onSearchInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -23,7 +23,7 @@
       <CaIconButton
         class="voyado-search-form__button"
         icon-name="search"
-        :aria-label="$t('SEARCH')"
+        :aria-label="$t('VOYADO_SEARCH')"
         @clicked="onSubmit"
       />
     </div>
@@ -56,6 +56,10 @@ export default {
     totalResults: {
       type: Number,
       default: 0
+    },
+    hasResults: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -98,9 +102,9 @@ export default {
             this.getAllProducts();
           }
 
-          if (this.hasProductResults) {
+          if (results?.primaryList?.totalHits) {
             this.$emit('update:totalResults', results.primaryList.totalHits);
-            this.$emit('update:noResults', false);
+            this.$emit('update:hasResults', true);
           }
         } catch (error) {
           this.$nuxt.error({ statusCode: error.statusCode, message: error });
@@ -108,7 +112,7 @@ export default {
           this.$emit('update:isLoading', false);
         }
       } else {
-        this.$emit('update:noResults', true);
+        this.$emit('update:hasResults', false);
         this.$emit('update:primaryProductGroups', []);
         this.$emit('update:products', []);
         this.$emit('update:isLoading', false);

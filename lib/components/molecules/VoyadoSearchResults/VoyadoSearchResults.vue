@@ -1,44 +1,47 @@
 <template>
   <div class="voyado-search-results">
-    <div class="voyado-search-results__top">
-      <h2 class="voyado-search-results__title">
-        {{ $t('SEARCH_RESULTS_TITLE') }}
-      </h2>
-      <button
-        class="voyado-search-results__btn"
-        type="button"
-        @click="visitSearchPage"
-      >
-        <CaIconAndText
-          class="voyado-search-results__see-all"
-          icon-name="arrow-right"
-          icon-position="right"
+    <CaSpinner
+      v-if="isLoading"
+      class="voyado-search-results__spinner"
+      :class="{
+        empty: !hasProducts
+      }"
+      :loading="isLoading"
+    />
+    <div
+      v-if="hasProducts"
+      class="voyado-search-results__results voyado-search-results__results--products"
+    >
+      <div class="voyado-search-results__top">
+        <h2 class="voyado-search-results__title">
+          {{ $t('VOYADO_SEARCH_SEARCH_TITLE') }}
+        </h2>
+        <button
+          class="voyado-search-results__btn"
+          type="button"
+          @click="visitSearchPage"
         >
-          {{ $t('SEARCH_RESULTS_SEE_ALL') }}
-        </CaIconAndText>
-      </button>
+          <CaIconAndText
+            class="voyado-search-results__see-all"
+            icon-name="arrow-right"
+            icon-position="right"
+          >
+            {{ $t('VOYADO_SEARCH_SEE_ALL') }}
+          </CaIconAndText>
+        </button>
+      </div>
+      <VoyadoSearchResultsList :products="products" />
     </div>
-    <div class="voyado-search-results__results-wrap">
-      <CaSpinner
-        v-if="isLoading"
-        class="voyado-search-results__spinner"
-        :class="{
-          empty: !hasProducts
-        }"
-        :loading="isLoading"
-      />
-      <div
-        v-if="!hasProducts && !isLoading"
-        class="voyado-search-results__no-results"
-      >
-        {{ $t('SEARCH_NO_RESULTS') }}
-      </div>
-      <div
-        v-if="hasProducts"
-        class="voyado-search-results__results voyado-search-results__results--products"
-      >
-        <VoyadoSearchResultsList :products="products" />
-      </div>
+    <div
+      v-else-if="!hasProducts && !isLoading"
+      class="voyado-search-results__results voyado-search-results__results--empty"
+    >
+      <p v-if="searchQuery.length === 0">
+        {{ $t('VOYADO_SEARCH_EMPTY_QUERY') }}
+      </p>
+      <p v-else>
+        {{ $t('VOYADO_SEARCH_NO_MATCH') }}
+      </p>
     </div>
   </div>
 </template>
@@ -48,21 +51,22 @@ export default {
   props: {
     products: {
       type: Array,
-      required: true,
       default: () => []
     },
     isLoading: {
       type: Boolean,
       default: false
     },
+    isFocus: {
+      type: Boolean,
+      default: false
+    },
     totalResults: {
       type: Number,
-      required: true,
       default: 0
     },
     searchQuery: {
       type: String,
-      required: true,
       default: ''
     },
     hasProducts: {

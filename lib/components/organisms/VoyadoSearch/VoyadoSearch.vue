@@ -8,7 +8,7 @@
           :primary-product-groups.sync="primaryProductGroups"
           :products.sync="products"
           :is-loading.sync="isLoading"
-          :no-results.sync="noResults"
+          :has-results.sync="hasResults"
           :total-results.sync="totalResults"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
@@ -17,24 +17,23 @@
           @voyadoSearchOnSubmit="onSubmit"
         />
       </div>
-      <section
-        v-if="
-          isLoading ||
-            (noResults && searchIsVisible) ||
-            (hasProductResults && searchIsVisible)
-        "
-        class="voyado-search__results"
+      <div
+        v-if="isLoading || (searchIsVisible && isFocus)"
+        class="voyado-search__results-container"
         :class="{
-          'voyado-search__results--loading': isLoading,
-          'voyado-search__results--loading-empty':
+          'voyado-search__results-container--loading': isLoading,
+          'voyado-search__results-container--loading-empty':
             isLoading && !hasProductResults,
-          'voyado-search__results--no-results': noResults
+          'voyado-search__results-container--empty': !hasResults,
+          'voyado-search__results-container--suggestions':
+            !isLoading && isFocus && !hasResults
         }"
       >
         <VoyadoSearchResults
           :products="products"
           :total-results="totalResults"
           :is-loading="isLoading"
+          :is-focus="isFocus"
           :search-query="searchQuery"
           :has-products="hasProductResults"
         />
@@ -44,14 +43,14 @@
           @click="onClose"
         >
           <CaIconAndText icon-name="x">
-            {{ $t('Close') }}
+            {{ $t('VOYADO_SEARCH_CLOSE') }}
           </CaIconAndText>
         </button>
-      </section>
+      </div>
     </div>
     <CaOverlay
       class="voyado-search__overlay"
-      :visible="isActive"
+      :visible="isFocus"
       @clicked="onClose"
     />
   </div>
@@ -79,12 +78,12 @@ export default {
   data: () => ({
     searchQuery: '',
     isLoading: false,
-    isActive: false,
+    isFocus: false,
     products: [],
     primaryProductGroups: [],
     totalResults: 0,
     searchStorage: null,
-    noResults: false
+    hasResults: false
   }),
   computed: {
     hasProductResults() {
@@ -110,7 +109,7 @@ export default {
     modifiers() {
       return {
         'voyado-search--visible': this.searchIsVisible,
-        'voyado-search--active': this.isActive
+        'voyado-search--focus': this.isFocus
       };
     },
     productsVisible() {
@@ -163,8 +162,8 @@ export default {
       this.products = [];
     },
     onFocus() {
-      if (!this.isActive) {
-        this.isActive = true;
+      if (!this.isFocus) {
+        this.isFocus = true;
         this.$store.dispatch('setViewportHeight');
         this.$store.dispatch('setScrollbarWidth');
         document.body.style.overflow = 'hidden';
@@ -172,11 +171,14 @@ export default {
     },
     onClose() {
       document.body.style.overflow = null;
-      this.noResults = false;
-      this.isActive = false;
+      this.hasResults = false;
+      this.isFocus = false;
       this.onClear();
       this.$emit('voyadoSearchOnClose');
     }
   }
 };
 </script>
+<style lang="scss">
+@import 'organisms/voyado-search';
+</style>
