@@ -15,7 +15,7 @@
       />
       <CaIconButton
         v-if="searchQuery.length"
-        class="ca-search__remove"
+        class="voyado-search-form__remove"
         icon-name="x"
         aria-label="Delete"
         @clicked="onClear"
