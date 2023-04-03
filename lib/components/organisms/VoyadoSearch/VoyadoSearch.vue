@@ -30,7 +30,7 @@
         }"
       >
         <VoyadoSearchResults
-          :products="productsVisible"
+          :products="productResults"
           :total-results="totalResults"
           :is-loading="isLoading"
           :is-focus="isFocus"
@@ -114,7 +114,7 @@ export default {
         'voyado-search--focus': this.isFocus
       };
     },
-    productsVisible() {
+    productResults() {
       return this.products.slice(0, this.productResultsLimit);
     },
     setSearchPageUrl() {
