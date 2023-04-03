@@ -18,7 +18,7 @@
         />
       </div>
       <div
-        v-if="isLoading || (searchIsVisible && isFocus)"
+        v-if="isLoading || isFocus"
         class="voyado-search__results-container"
         :class="{
           'voyado-search__results-container--loading': isLoading,
@@ -65,14 +65,13 @@ import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
 export default {
   name: 'VoyadoSearch',
   props: {
-    // Used to toogle search in mobile, set to true when user opens it
-    opened: {
-      type: Boolean,
-      default: false
-    },
-    visibleWhenSiteIsAtTop: {
+    isVisible: {
       type: Boolean,
       default: true
+    },
+    productResultsLimit: {
+      type: Number,
+      default: 10
     }
   },
   data: () => ({
@@ -86,34 +85,14 @@ export default {
     hasResults: false
   }),
   computed: {
-    hasProductResults() {
-      return !!this.products.length;
-    },
-    searchIsVisible() {
-      if (this.visibleWhenSiteIsAtTop) {
-        if (
-          this.$store.getters.viewport === 'phone' ||
-          this.$store.getters.viewport === 'tablet'
-        ) {
-          return this.$store.getters.siteIsAtTop || this.opened;
-        } else {
-          return true;
-        }
-      } else {
-        return this.$store.getters.viewport === 'phone' ||
-          this.$store.getters.viewport === 'tablet'
-          ? this.opened
-          : true;
-      }
-    },
-    productResultsLimit() {
-      return this.$store.getters.viewport === 'phone' ? 5 : 10;
-    },
     modifiers() {
       return {
-        'voyado-search--visible': this.searchIsVisible,
+        'voyado-search--visible': this.isVisible,
         'voyado-search--focus': this.isFocus
       };
+    },
+    hasProductResults() {
+      return !!this.products.length;
     },
     productResults() {
       return this.products.slice(0, this.productResultsLimit);
