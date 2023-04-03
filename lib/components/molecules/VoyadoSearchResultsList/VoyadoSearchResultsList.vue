@@ -7,8 +7,8 @@
       class="voyado-search-results-list__list voyado-search-results-list__list--primary"
     >
       <li
-        v-for="product in products"
-        :key="product.key"
+        v-for="(product, index) in products"
+        :key="index"
         class="voyado-search-results-list__item voyado-search-results-list__item--product"
       >
         <NuxtLink

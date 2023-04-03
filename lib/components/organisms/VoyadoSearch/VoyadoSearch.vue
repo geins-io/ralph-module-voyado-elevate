@@ -63,7 +63,6 @@ import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
 // **SASS-path:** _./styles/components/molecules/voyado-search.scss_
 export default {
   name: 'VoyadoSearch',
-  mixins: [],
   props: {
     // Used to toogle search in mobile, set to true when user opens it
     onOpened: {
