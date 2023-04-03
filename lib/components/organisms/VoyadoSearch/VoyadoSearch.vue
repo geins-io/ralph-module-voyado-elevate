@@ -30,7 +30,7 @@
         }"
       >
         <VoyadoSearchResults
-          :products="products"
+          :products="productsVisible"
           :total-results="totalResults"
           :is-loading="isLoading"
           :is-focus="isFocus"
@@ -104,6 +104,9 @@ export default {
           ? this.opened
           : true;
       }
+    },
+    resultsToShow() {
+      return this.$store.getters.viewport === 'phone' ? 5 : 10;
     },
     modifiers() {
       return {

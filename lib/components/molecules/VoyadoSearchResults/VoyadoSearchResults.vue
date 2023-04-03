@@ -75,9 +75,6 @@ export default {
     }
   },
   computed: {
-    resultsToShow() {
-      return this.$store.getters.viewport === 'phone' ? 5 : 10;
-    },
     setSearchPageUrl() {
       return (
         this.$getPath('index') +
