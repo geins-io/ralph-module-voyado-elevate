@@ -39,6 +39,7 @@
           @voyadoSearchOnRouteChange="visitSearchPage"
         />
         <button
+          v-if="hasResults"
           type="button"
           class="voyado-search__close-button only-mobile"
           @click="onClose"
