@@ -17,12 +17,12 @@
           {{ $t('VOYADO_SEARCH_SEARCH_TITLE') }}
         </h2>
         <button
-          class="voyado-search-results__btn"
+          class="voyado-search-results__see-all-button"
           type="button"
           @click="visitSearchPage"
         >
           <CaIconAndText
-            class="voyado-search-results__see-all"
+            class="voyado-search-results__see-all-text"
             icon-name="arrow-right"
             icon-position="right"
           >
@@ -74,19 +74,8 @@ export default {
       default: false
     }
   },
-  computed: {
-    setSearchPageUrl() {
-      return (
-        this.$getPath('index') +
-        this.$config.routePaths.search +
-        '/' +
-        this.$data.searchQuery
-      );
-    }
-  },
   methods: {
     visitSearchPage() {
-      this.$router.push(this.setSearchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
     }
   }

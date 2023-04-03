@@ -36,6 +36,7 @@
           :is-focus="isFocus"
           :search-query="searchQuery"
           :has-products="hasProductResults"
+          @voyadoSearchOnRouteChange="visitSearchPage"
         />
         <button
           type="button"
@@ -118,12 +119,9 @@ export default {
       return this.products.slice(0, this.productResultsLimit);
     },
     searchPageUrl() {
-      return (
-        this.$getPath('index') +
-        this.$config.routePaths.search +
-        '/' +
-        this.searchQuery
-      );
+      const index =
+        this.$getPath('index') === '/' ? '' : this.$getPath('index');
+      return index + this.$config.routePaths.search + '/' + this.searchQuery;
     }
   },
   mounted() {
