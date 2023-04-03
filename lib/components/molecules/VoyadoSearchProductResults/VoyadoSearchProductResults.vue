@@ -13,7 +13,7 @@
       >
         <NuxtLink
           class="voyado-search-product-results__link voyado-search-product-results__link--product"
-          :to="'/'"
+          :to="product.link"
           :title="product.title"
         >
           <div class="voyado-search-product-results__image">
