@@ -66,7 +66,7 @@ export default {
   name: 'VoyadoSearch',
   props: {
     // Used to toogle search in mobile, set to true when user opens it
-    onOpened: {
+    opened: {
       type: Boolean,
       default: false
     },
@@ -124,6 +124,13 @@ export default {
       return index + this.$config.routePaths.search + '/' + this.searchQuery;
     }
   },
+  watch: {
+    searchQuery(val) {
+      if (val.length && this.isFocus === false) {
+        this.onFocus();
+      }
+    }
+  },
   mounted() {
     this.searchStorage = window.localStorage;
     eventbus.$on('route-change', () => {
@@ -162,7 +169,7 @@ export default {
       this.products = [];
     },
     onFocus() {
-      if (!this.isFocus) {
+      if (this.isFocus === false) {
         this.isFocus = true;
         this.$store.dispatch('setViewportHeight');
         this.$store.dispatch('setScrollbarWidth');
