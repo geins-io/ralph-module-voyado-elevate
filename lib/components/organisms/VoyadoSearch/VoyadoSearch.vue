@@ -117,7 +117,7 @@ export default {
     productResults() {
       return this.products.slice(0, this.productResultsLimit);
     },
-    setSearchPageUrl() {
+    searchPageUrl() {
       return (
         this.$getPath('index') +
         this.$config.routePaths.search +
@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     visitSearchPage() {
-      this.$router.push(this.setSearchPageUrl);
+      this.$router.push(this.searchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
     },
     onBlur() {
