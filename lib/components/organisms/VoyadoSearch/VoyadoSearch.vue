@@ -105,7 +105,7 @@ export default {
           : true;
       }
     },
-    resultsToShow() {
+    productResultsLimit() {
       return this.$store.getters.viewport === 'phone' ? 5 : 10;
     },
     modifiers() {
@@ -115,7 +115,7 @@ export default {
       };
     },
     productsVisible() {
-      return this.products.slice(0, this.resultsToShow);
+      return this.products.slice(0, this.productResultsLimit);
     },
     setSearchPageUrl() {
       return (
