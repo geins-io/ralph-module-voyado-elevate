@@ -30,7 +30,7 @@
           </CaIconAndText>
         </button>
       </div>
-      <VoyadoSearchProductResultsList :products="products" />
+      <VoyadoSearchProductReults :products="products" />
     </div>
     <div
       v-else-if="!hasProducts && !isLoading"
