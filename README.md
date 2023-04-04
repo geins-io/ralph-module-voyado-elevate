@@ -103,6 +103,23 @@ export default {
 </script>
 ```
 
+## Translations
+
+Available translations:
+
+|Key                                    |Value                        |
+|---------------------------------------|-----------------------------|
+|VOYADO_SEARCH_FORM                     |`Search`                     |
+|VOYADO_SEARCH_FORM_PLACEHOLDER         |`Search`                     |
+|VOYADO_SEARCH_RESULTS_TITLE            |`Search results`             |
+|VOYADO_SEARCH_RESULTS_SEE_ALL          |`Show all`                   |
+|VOYADO_SEARCH_RESULTS_EMPTY_QUERY      |`Search for anything`        |
+|VOYADO_SEARCH_RESULTS_NO_MATCH         |`Sorry, no matches found`    |
+|VOYADO_SEARCH_PRODUCT_RESULTS_TITLE    |`Product <PIPE> Products`    |
+|VOYADO_SEARCH_CLOSE                    |`Close`                      |
+
+> NOTE: Replace `<PIPE>` with the "|" character
+
 ## Development
 
 To contribute to this module, clone this repository and run the following commands:

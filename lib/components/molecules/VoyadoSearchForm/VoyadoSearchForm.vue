@@ -6,8 +6,8 @@
         class="voyado-search-form__input"
         type="search"
         autocomplete="off"
-        :aria-label="$t('VOYADO_SEARCH')"
-        :placeholder="$t('VOYADO_SEARCH_PLACEHOLDER')"
+        :aria-label="$t('VOYADO_SEARCH_FORM')"
+        :placeholder="$t('VOYADO_SEARCH_FORM_PLACEHOLDER')"
         @input="onSearchInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -23,7 +23,7 @@
       <CaIconButton
         class="voyado-search-form__button"
         icon-name="search"
-        :aria-label="$t('VOYADO_SEARCH')"
+        :aria-label="$t('VOYADO_SEARCH_FORM')"
         @clicked="onSubmit"
       />
     </div>

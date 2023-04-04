@@ -1,7 +1,7 @@
 <template>
   <div class="voyado-search-product-results">
     <h3 class="voyado-search-product-results__title">
-      {{ $tc('VOYADO_SEARCH_PRODUCT', 2) }}
+      {{ $tc('VOYADO_SEARCH_PRODUCT_RESULTS_TITLE', 2) }}
     </h3>
     <ul
       class="voyado-search-product-results__list voyado-search-product-results__list--primary"

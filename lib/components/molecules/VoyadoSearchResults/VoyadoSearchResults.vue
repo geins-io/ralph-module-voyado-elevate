@@ -14,7 +14,7 @@
     >
       <div class="voyado-search-results__top">
         <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_SEARCH_TITLE') }}
+          {{ $t('VOYADO_SEARCH_RESULTS_RESULTS_TITLE') }}
         </h2>
         <button
           class="voyado-search-results__see-all-button"
@@ -26,7 +26,7 @@
             icon-name="arrow-right"
             icon-position="right"
           >
-            {{ $t('VOYADO_SEARCH_SEE_ALL') }}
+            {{ $t('VOYADO_SEARCH_RESULTS_SEE_ALL') }}
           </CaIconAndText>
         </button>
       </div>
@@ -37,10 +37,10 @@
       class="voyado-search-results__results voyado-search-results__results--empty"
     >
       <p v-if="searchQuery.length === 0">
-        {{ $t('VOYADO_SEARCH_EMPTY_QUERY') }}
+        {{ $t('VOYADO_SEARCH_RESULTS_EMPTY_QUERY') }}
       </p>
       <p v-else>
-        {{ $t('VOYADO_SEARCH_NO_MATCH') }}
+        {{ $t('VOYADO_SEARCH_RESULTS_NO_MATCH') }}
       </p>
     </div>
   </div>
