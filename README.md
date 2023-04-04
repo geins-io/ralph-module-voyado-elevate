@@ -147,6 +147,9 @@ npm run format
 npm run lint
 ```
 
+## Commits
+We enforce [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) using [@commitlint/config-conventional](https://www.npmjs.com/package/@commitlint/config-conventional) combined with [@husky](https://www.npmjs.com/package/husky).
+
 ## License
 MIT
 
