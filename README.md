@@ -38,6 +38,36 @@ module.exports = {
 }
 ```
 
+After installing the module, make sure to add the `@apptus/esales-api` package to the transpile array so that it can be transpiled correctly. And add the configuration to support CommonJS files for `@apptus/esales-api` by pushing a new rule to the `config.module.rules` array in the `build.extend` method. Here's an example configuration:
+```javascript
+// nuxt.config.js
+
+export default {
+  // ...
+
+  modules: [
+    // ...
+    'ralph-module-voyado-elevate'
+  ],
+
+  transpile: [
+    '@apptus/esales-api'
+  ],
+
+  build: {
+    // You can extend webpack config here
+    extend (config, { isDev }) {
+      // Support CommonJS files for @apptus/esales-api
+      config.module.rules.push({
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
+      });
+    }
+  }
+}
+```
+
 ## Usage
 
 After installing the module, you can use its components in your Nuxt2 app by importing them in your .vue files:
