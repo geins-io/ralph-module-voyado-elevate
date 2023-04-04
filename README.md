@@ -45,11 +45,6 @@ After installing the module, make sure to add the `@apptus/esales-api` package t
 export default {
   // ...
 
-  modules: [
-    // ...
-    'ralph-module-voyado-elevate'
-  ],
-
   transpile: [
     '@apptus/esales-api'
   ],
