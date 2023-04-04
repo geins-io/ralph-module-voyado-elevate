@@ -1,9 +1,9 @@
 {
   "name": "ralph-module-voyado-elevate",
   "version": "0.1.0",
-  "description": "Boilerplate for creating a module for Geins PWA strorefront",
+  "description": "Component library for Voyado Elevate integrations with Ralph Storefront",
   "author": {
-    "name": "arvidsson-geins"
+    "name": "Geins"
   },
   "keywords": [
     "vue",
