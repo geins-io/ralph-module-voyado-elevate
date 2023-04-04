@@ -35,6 +35,18 @@ import { esales } from '@apptus/esales-api';
 export default {
   name: 'VoyadoSearchForm',
   props: {
+    clusterId: {
+      type: String,
+      required: true
+    },
+    market: {
+      type: String,
+      required: true
+    },
+    localeIso: {
+      type: String,
+      required: true
+    },
     searchQuery: {
       type: String,
       required: true,
@@ -78,9 +90,9 @@ export default {
   methods: {
     esalesApi() {
       return esales({
-        market: 'SE',
-        locale: 'sv-SE',
-        clusterId: 'wAFAF8CF4',
+        market: this.market,
+        locale: this.localeIso,
+        clusterId: this.clusterId,
         touchpoint: 'desktop'
       });
     },

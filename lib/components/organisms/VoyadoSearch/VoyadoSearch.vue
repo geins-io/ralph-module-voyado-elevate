@@ -4,6 +4,9 @@
       <div class="voyado-search__bar">
         <VoyadoSearchForm
           class="voyado-search__form"
+          :cluster-id="clusterId"
+          :market="market"
+          :locale-iso="localeIso"
           :search-query.sync="searchQuery"
           :primary-product-groups.sync="primaryProductGroups"
           :products.sync="products"
@@ -66,6 +69,18 @@ import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
 export default {
   name: 'VoyadoSearch',
   props: {
+    clusterId: {
+      type: String,
+      required: true
+    },
+    market: {
+      type: String,
+      required: true
+    },
+    localeIso: {
+      type: String,
+      required: true
+    },
     isVisible: {
       type: Boolean,
       default: true
