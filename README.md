@@ -18,7 +18,7 @@ or
 yarn add ralph-module-voyado-elevate
 ```
 
-Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `ralph-module-voyado-elevate` object.:
+Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `ralph-module-voyado-elevate` object:
 ```javascript
 // nuxt.config.js
 
@@ -31,7 +31,7 @@ module.exports = {
         enabled: true,
 
         // Your Voyado Elevate cluster ID
-        clusterId: 'yourIntegrationKey'
+        clusterId: 'yourClusterId'
       }
     ]
   ]
@@ -74,17 +74,37 @@ After installing the module, you can use its components in your Nuxt2 app by imp
 
 ```vue
 <template>
-  <ralph-voyado-elevate-component />
+  <div>
+    <VoyadoSearch
+      :cluster-id="clusterId"
+      :market="market"
+      :locale-iso="localeIso"
+      :is-visible="isVisible"
+      :product-results-limit="productResultsLimit"
+      @voyadoSearchOnClose="onSearchClose"
+      @voyadoSearchOnRouteChange="onSearchRouteChange"
+    />
+  </div>
 </template>
 
 <script>
-import { RalphVoyadoElevateComponent } from 'ralph-module-voyado-elevate'
-
 export default {
-  components: {
-    RalphVoyadoElevateComponent
+  data: () => ({
+    clusterId: 'your_cluster_id',
+    market: 'your_market',
+    localeIso: 'your_locale_iso',
+    isVisible: true,
+    productResultsLimit: 10
+  }),
+  methods: {
+    onSearchClose() {
+      console.log('Search closed');
+    },
+    onSearchRouteChange() {
+      console.log('Search route changed');
+    }
   }
-}
+};
 </script>
 ```
 
