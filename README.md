@@ -11,6 +11,7 @@ We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/packag
 - Enable the support for module options (clusterId etc) in customer repo
 - Support for other infrastructure in this module like nuxt.config.js?
 - Publish module to npm to enable installation on customer repo
+- Handle extended store in this module?
 
 ## Installation
 
