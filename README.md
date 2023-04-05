@@ -6,6 +6,12 @@ We use Voyado's helper library [@apptus/esales-api](https://github.com/geins-io/
 
 > A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
 
+## TODO
+- Transpile @apptus/esales-api in this module instead of customer repo
+- Enable the support for module options (clusterId etc) in customer repo
+- Support for other infrastructure in this module like nuxt.config.js?
+- Publish module to npm to enable installation on customer repo
+
 ## Installation
 
 To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it from npm using the following command:
@@ -13,13 +19,6 @@ To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it
 ```bash
 # Install the package using npm:
 npm install ralph-module-voyado-elevate
-```
-
-or
-
-```bash
-# Install the package using yarn:
-yarn add ralph-module-voyado-elevate
 ```
 
 Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `ralph-module-voyado-elevate` object:
