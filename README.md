@@ -2,6 +2,10 @@
 
 > Component library for Voyado Elevate integrations with Ralph Storefront
 
+We use Voyado's helper library [@apptus/esales-api](https://github.com/geins-io/ralph-module-voyado-elevate) for API requests.
+
+> A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
+
 ## Installation
 
 To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it from npm using the following command:
