@@ -14,7 +14,7 @@
     >
       <div class="voyado-search-results__top">
         <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_RESULTS_RESULTS_TITLE') }}
+          {{ $t('VOYADO_SEARCH_RESULTS_TITLE') }}
         </h2>
         <button
           class="voyado-search-results__see-all-button"

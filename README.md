@@ -7,10 +7,21 @@ We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/packag
 > A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
 
 ## TODO
-- Transpile @apptus/esales-api in this module instead of customer repo
-- Enable the support for module options (clusterId etc) in customer repo
-- Support for other infrastructure in this module like nuxt.config.js?
+
+### Must have
+- Support results for "didYouMean"
+- Handling of price & currency (or just show the lowest current price as a first step?)
 - Publish module to npm to enable installation on customer repo
+
+### Nice to have
+- Support results for "relatedSearches"
+- Support results for "secondaryList"
+- Support results for "contentLists"
+- Enable support for module options (clusterId etc) in customer repo
+- Transpile @apptus/esales-api in this module instead of customer repo
+
+### Further development ideas
+- Support for other infrastructure in this module like nuxt.config.js?
 - Handle extended store in this module?
 
 ## Installation
@@ -106,6 +117,16 @@ export default {
 };
 </script>
 ```
+
+## Required props
+
+|Prop                                   |Type          |Value                         |
+|---------------------------------------|--------------|------------------------------|
+|clusterId                              |String        |`YOUR_CLUSTER_ID_FROM_VOYADO` |
+|market                                 |String        |`SE`                          |
+|localeIso                              |String        |`sv-SE`                       |
+
+> NOTE: Values are example data
 
 ## Translations
 
