@@ -16,30 +16,28 @@
           :to="product.link"
           :title="product.title"
         >
-          <div class="voyado-search-product-results__image">
-            <CaImage
-              v-if="product.imageInfo.thumbnail"
-              class="voyado-search-product-results__image"
-              type="product"
-              :ratio="$config.productImageRatio"
-              :src="product.imageInfo.thumbnail"
-              :alt="product.title"
-              sizes="40px"
-            />
-            <CaImage
-              v-else
-              class="voyado-search-product-results__image"
-              :ratio="$config.productImageRatio"
-              :src="require('~/assets/placeholders/product-image-square.png')"
-              alt="placeholder"
-            />
-          </div>
+          <CaImage
+            v-if="product.imageInfo.thumbnail"
+            class="voyado-search-product-results__image"
+            type="product"
+            :ratio="$config.productImageRatio"
+            :filename="getImageFilename(product.imageInfo.thumbnail)"
+            :alt="product.title"
+            sizes="40px"
+          />
+          <CaImage
+            v-else
+            class="voyado-search-product-results__image"
+            :ratio="$config.productImageRatio"
+            :src="require('~/assets/placeholders/product-image-square.png')"
+            alt="placeholder"
+          />
           <div class="voyado-search-product-results__info">
             <div class="voyado-search-product-results__item-name">
               {{ product.title }}
             </div>
             <div class="voyado-search-product-results__price">
-              <span class="voyado-search-product-results____selling">
+              <span class="voyado-search-product-results__selling">
                 {{ product.sellingPrice.min }}
               </span>
             </div>
@@ -57,6 +55,12 @@ export default {
       type: Array,
       required: true,
       default: () => []
+    }
+  },
+  methods: {
+    getImageFilename(imageUrl) {
+      const filename = imageUrl.split('/').pop();
+      return filename;
     }
   }
 };
