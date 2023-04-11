@@ -31,22 +31,12 @@
 </template>
 <script>
 import { esales } from '@apptus/esales-api';
+import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 export default {
   name: 'VoyadoSearchForm',
+  mixins: [VoyadoProps],
   props: {
-    clusterId: {
-      type: String,
-      required: true
-    },
-    market: {
-      type: String,
-      required: true
-    },
-    localeIso: {
-      type: String,
-      required: true
-    },
     searchQuery: {
       type: String,
       required: true,

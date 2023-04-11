@@ -4,9 +4,6 @@
       <div class="voyado-search__bar">
         <VoyadoSearchForm
           class="voyado-search__form"
-          :cluster-id="clusterId"
-          :market="market"
-          :locale-iso="localeIso"
           :search-query.sync="searchQuery"
           :primary-product-groups.sync="primaryProductGroups"
           :products.sync="products"
@@ -62,25 +59,15 @@
 </template>
 <script>
 import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
+import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 // @group Molecules
 // The search including search results<br><br>
 // **SASS-path:** _./styles/components/molecules/voyado-search.scss_
 export default {
   name: 'VoyadoSearch',
+  mixins: [VoyadoProps],
   props: {
-    clusterId: {
-      type: String,
-      required: true
-    },
-    market: {
-      type: String,
-      required: true
-    },
-    localeIso: {
-      type: String,
-      required: true
-    },
     isVisible: {
       type: Boolean,
       default: true
