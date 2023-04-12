@@ -10,6 +10,8 @@
           :is-loading.sync="isLoading"
           :has-results.sync="hasResults"
           :total-results.sync="totalResults"
+          :phrase-suggestions.sync="phraseSuggestions"
+          :recent-searches.sync="recentSearches"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
@@ -34,8 +36,10 @@
           :total-results="totalResults"
           :is-loading="isLoading"
           :is-focus="isFocus"
-          :search-query="searchQuery"
+          :search-query.sync="searchQuery"
           :has-products="hasProductResults"
+          :phrase-suggestions="phraseSuggestions"
+          :recent-searches="recentSearches"
           @voyadoSearchOnRouteChange="visitSearchPage"
         />
         <button
@@ -85,7 +89,9 @@ export default {
     primaryProductGroups: [],
     totalResults: 0,
     searchStorage: null,
-    hasResults: false
+    hasResults: false,
+    phraseSuggestions: [],
+    recentSearches: []
   }),
   computed: {
     modifiers() {
@@ -108,6 +114,7 @@ export default {
   },
   watch: {
     searchQuery(val) {
+      console.log('searchQuery', val);
       if (val.length && this.isFocus === false) {
         this.onFocus();
       }

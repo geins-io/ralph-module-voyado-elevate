@@ -33,7 +33,48 @@
       <VoyadoSearchProductResults :products="products" />
     </div>
     <div
-      v-else-if="!hasProducts && !isLoading"
+      v-else-if="phraseSuggestions.length || recentSearches.length"
+      class="voyado-search-results__results voyado-search-results__results--suggestions"
+    >
+      <div
+        v-if="phraseSuggestions.length"
+        class="voyado-search-results__phrase-suggestions"
+      >
+        <h2 class="voyado-search-results__title">
+          {{ $t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE') }}
+        </h2>
+        <ul>
+          <li v-for="(suggestion, index) in phraseSuggestions" :key="index">
+            <CaClickable
+              class="voyado-search-results__suggestion"
+              @clicked="setQuery(suggestion.q)"
+            >
+              {{ suggestion.q }}
+            </CaClickable>
+          </li>
+        </ul>
+      </div>
+      <div
+        v-if="recentSearches.length"
+        class="voyado-search-results__recent-searches"
+      >
+        <h2 class="voyado-search-results__title">
+          {{ $t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE') }}
+        </h2>
+        <ul>
+          <li v-for="(search, index) in recentSearches" :key="index">
+            <CaClickable
+              class="voyado-search-results__suggestion"
+              @clicked="setQuery(search.q)"
+            >
+              {{ search.q }}
+            </CaClickable>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div
+      v-else
       class="voyado-search-results__results voyado-search-results__results--empty"
     >
       <p v-if="searchQuery.length === 0">
@@ -72,11 +113,22 @@ export default {
     hasProducts: {
       type: Boolean,
       default: false
+    },
+    phraseSuggestions: {
+      type: Array,
+      default: () => []
+    },
+    recentSearches: {
+      type: Array,
+      default: () => []
     }
   },
   methods: {
     visitSearchPage() {
       this.$emit('voyadoSearchOnRouteChange');
+    },
+    setQuery(q) {
+      this.$emit('update:searchQuery', q);
     }
   }
 };

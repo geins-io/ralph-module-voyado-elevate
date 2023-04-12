@@ -8,7 +8,6 @@
         autocomplete="off"
         :aria-label="$t('VOYADO_SEARCH_FORM')"
         :placeholder="$t('VOYADO_SEARCH_FORM_PLACEHOLDER')"
-        @input="onSearchInput"
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onEnter"
@@ -30,6 +29,7 @@
   </div>
 </template>
 <script>
+import { debounce } from 'lodash';
 import { esales } from '@apptus/esales-api';
 import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
@@ -39,15 +39,21 @@ export default {
   props: {
     searchQuery: {
       type: String,
-      required: true,
-      default: ''
+      required: true
     },
     primaryProductGroups: {
       type: Array,
-      required: true,
-      default: () => []
+      required: true
     },
     products: {
+      type: Array,
+      default: () => []
+    },
+    phraseSuggestions: {
+      type: Array,
+      default: () => []
+    },
+    recentSearches: {
       type: Array,
       default: () => []
     },
@@ -62,8 +68,15 @@ export default {
     hasResults: {
       type: Boolean,
       default: false
+    },
+    debounceTimeout: {
+      type: Number,
+      default: 500
     }
   },
+  data: () => ({
+    debounceSearch: null
+  }),
   computed: {
     hasProductResults() {
       return this.primaryProductGroups.length;
@@ -77,6 +90,22 @@ export default {
       }
     }
   },
+  watch: {
+    localSearchQuery(newVal, oldVal) {
+      this.$emit('voyadoSearchOnQueryChange', this.$data);
+      this.debounceSearch();
+      if (!newVal && !!oldVal) {
+        this.$emit('update:hasResults', false);
+        this.$emit('update:primaryProductGroups', []);
+        this.$emit('update:products', []);
+        this.$emit('update:isLoading', false);
+        this.onClear();
+      }
+    }
+  },
+  created() {
+    this.debounceSearch = debounce(this.fetchResults, this.debounceTimeout);
+  },
   methods: {
     esalesApi() {
       return esales({
@@ -88,46 +117,39 @@ export default {
     },
     async fetchResults() {
       this.$emit('update:isLoading', true);
+      try {
+        const results = await this.esalesApi().query.autocomplete({
+          q: this.searchQuery,
+          limit: 60
+        });
 
-      if (this.searchQuery.length) {
-        try {
-          const results = await this.esalesApi().query.searchPage({
-            q: this.searchQuery,
-            limit: 60
-          });
+        console.log(results);
 
-          if (results?.primaryList?.productGroups?.length) {
-            this.$emit(
-              'update:primaryProductGroups',
-              results?.primaryList?.productGroups || []
-            );
-            this.getAllProducts();
-          }
-
-          if (results?.primaryList?.totalHits) {
-            this.$emit('update:totalResults', results.primaryList.totalHits);
-            this.$emit('update:hasResults', true);
-          }
-        } catch (error) {
-          this.$nuxt.error({ statusCode: error.statusCode, message: error });
-        } finally {
-          this.$emit('update:isLoading', false);
+        if (results?.primaryList?.productGroups?.length) {
+          this.$emit(
+            'update:primaryProductGroups',
+            results?.primaryList?.productGroups
+          );
+          this.getAllProducts();
         }
-      } else {
-        this.$emit('update:hasResults', false);
-        this.$emit('update:primaryProductGroups', []);
-        this.$emit('update:products', []);
+
+        if (results?.primaryList?.totalHits) {
+          this.$emit('update:totalResults', results.primaryList.totalHits);
+          this.$emit('update:hasResults', true);
+        }
+
+        if (results?.phraseSuggestions?.length) {
+          this.$emit('update:phraseSuggestions', results.phraseSuggestions);
+        }
+
+        if (results?.recentSearches?.length) {
+          this.$emit('update:recentSearches', results.recentSearches);
+        }
+      } catch (error) {
+        this.$nuxt.error({ statusCode: error.statusCode, message: error });
+      } finally {
         this.$emit('update:isLoading', false);
-        this.onClear();
       }
-    },
-    // @vuese
-    // Perform search
-    onSearchInput() {
-      this.$nextTick(() => {
-        this.fetchResults();
-        this.$emit('voyadoSearchOnInput', this.$data);
-      });
     },
     getAllProducts() {
       const products = [];
@@ -139,6 +161,7 @@ export default {
       this.$emit('update:products', products);
     },
     onFocus() {
+      this.fetchResults();
       this.$emit('voyadoSearchOnFocus', this.$data);
     },
     onBlur() {
