@@ -1,89 +1,107 @@
 <template>
-  <div class="voyado-search-results">
-    <CaSpinner
-      v-if="isLoading"
-      class="voyado-search-results__spinner"
-      :class="{
-        empty: !hasProducts
-      }"
-      :loading="isLoading"
-    />
+  <div
+    class="voyado-search-results"
+    :class="{
+      'voyado-search-results--empty':
+        !recentSearches.length &&
+        !phraseSuggestions.length &&
+        !hasResults &&
+        isLoading
+    }"
+  >
+    <div v-if="isLoading" class="voyado-search-results__loading">
+      <CaSpinner class="voyado-search-results__spinner" :loading="isLoading" />
+    </div>
     <div
-      v-if="hasProducts"
-      class="voyado-search-results__results voyado-search-results__results--products"
+      v-if="recentSearches.length && !hasResults"
+      class="voyado-search-results__results voyado-search-results__results--suggestions"
     >
       <div class="voyado-search-results__top">
         <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_RESULTS_TITLE') }}
+          {{ $t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE') }}
         </h2>
         <button
-          class="voyado-search-results__see-all-button"
+          class="voyado-search-results__remove-recent"
           type="button"
-          @click="visitSearchPage"
+          @click="removeRecent"
         >
-          <CaIconAndText
-            class="voyado-search-results__see-all-text"
-            icon-name="arrow-right"
-            icon-position="right"
-          >
-            {{ $t('VOYADO_SEARCH_RESULTS_SEE_ALL') }}
-          </CaIconAndText>
+          {{ $t('VOYADO_SEARCH_RESULTS_REMOVE_RECENT') }}
         </button>
       </div>
+
+      <ul class="voyado-search-results__suggestions-list">
+        <li v-for="(search, index) in recentSearches" :key="index">
+          <CaClickable
+            class="voyado-search-results__suggestion"
+            @clicked="setQuery(search.q)"
+          >
+            <span class="voyado-search-results__suggestion-text">
+              {{ search.q }}
+            </span>
+            <CaIconButton
+              class="voyado-search-results__search-icon"
+              icon-name="search"
+              :aria-label="$t('SEARCH')"
+            />
+          </CaClickable>
+        </li>
+      </ul>
+    </div>
+    <div
+      v-if="phraseSuggestions.length"
+      class="voyado-search-results__results voyado-search-results__results--suggestions"
+    >
+      <div class="voyado-search-results__top">
+        <h2 v-if="!searchQuery" class="voyado-search-results__title">
+          {{ $t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE') }}
+        </h2>
+      </div>
+
+      <ul class="voyado-search-results__suggestions-list">
+        <li v-for="(suggestion, index) in phraseSuggestions" :key="index">
+          <CaClickable
+            class="voyado-search-results__suggestion"
+            @clicked="setQuery(suggestion.q)"
+          >
+            <!-- eslint-disable vue/no-v-html -->
+            <!-- eslint-disable vue/no-v-text-v-html-on-component -->
+            <span
+              class="voyado-search-results__suggestion-text"
+              v-html="formatHighlighted(suggestion.highlighted)"
+            />
+            <CaIconButton
+              class="voyado-search-results__search-icon"
+              icon-name="search"
+              :aria-label="$t('SEARCH')"
+            />
+          </CaClickable>
+        </li>
+      </ul>
+    </div>
+    <div
+      v-if="hasResults"
+      class="voyado-search-results__results voyado-search-results__results--products"
+    >
       <VoyadoSearchProductResults :products="products" />
     </div>
     <div
-      v-else-if="phraseSuggestions.length || recentSearches.length"
-      class="voyado-search-results__results voyado-search-results__results--suggestions"
-    >
-      <div
-        v-if="phraseSuggestions.length"
-        class="voyado-search-results__phrase-suggestions"
-      >
-        <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE') }}
-        </h2>
-        <ul>
-          <li v-for="(suggestion, index) in phraseSuggestions" :key="index">
-            <CaClickable
-              class="voyado-search-results__suggestion"
-              @clicked="setQuery(suggestion.q)"
-            >
-              {{ suggestion.q }}
-            </CaClickable>
-          </li>
-        </ul>
-      </div>
-      <div
-        v-if="recentSearches.length"
-        class="voyado-search-results__recent-searches"
-      >
-        <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE') }}
-        </h2>
-        <ul>
-          <li v-for="(search, index) in recentSearches" :key="index">
-            <CaClickable
-              class="voyado-search-results__suggestion"
-              @clicked="setQuery(search.q)"
-            >
-              {{ search.q }}
-            </CaClickable>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div
-      v-else
+      v-else-if="searchQuery && !hasResults && !isLoading"
       class="voyado-search-results__results voyado-search-results__results--empty"
     >
-      <p v-if="searchQuery.length === 0">
-        {{ $t('VOYADO_SEARCH_RESULTS_EMPTY_QUERY') }}
-      </p>
-      <p v-else>
+      <p>
         {{ $t('VOYADO_SEARCH_RESULTS_NO_MATCH') }}
       </p>
     </div>
+    <CaButton
+      v-if="
+        ((!searchQuery || !!totalHits) && !isLoading) ||
+          (isLoading && searchQuery)
+      "
+      :disabled="!totalHits"
+      type="full-width"
+    >
+      {{ $tc('VOYADO_SEARCH_RESULTS_BUTTON', totalHits, { hits: totalHits }) }}
+    </CaButton>
   </div>
 </template>
 <script>
@@ -102,17 +120,13 @@ export default {
       type: Boolean,
       default: false
     },
-    totalResults: {
+    totalHits: {
       type: Number,
       default: 0
     },
     searchQuery: {
       type: String,
       default: ''
-    },
-    hasProducts: {
-      type: Boolean,
-      default: false
     },
     phraseSuggestions: {
       type: Array,
@@ -121,6 +135,10 @@ export default {
     recentSearches: {
       type: Array,
       default: () => []
+    },
+    hasResults: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -129,6 +147,13 @@ export default {
     },
     setQuery(q) {
       this.$emit('update:searchQuery', q);
+    },
+    formatHighlighted(text) {
+      const formattedText = text.replace(/{(.*?)}/g, '<strong>$1</strong>');
+      return formattedText;
+    },
+    removeRecent() {
+      this.$emit('voyadoSearchRemoveRecent');
     }
   }
 };

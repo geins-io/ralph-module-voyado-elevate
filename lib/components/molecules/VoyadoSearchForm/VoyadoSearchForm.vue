@@ -30,7 +30,6 @@
 </template>
 <script>
 import { debounce } from 'lodash';
-import { esales } from '@apptus/esales-api';
 import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 export default {
@@ -39,10 +38,6 @@ export default {
   props: {
     searchQuery: {
       type: String,
-      required: true
-    },
-    primaryProductGroups: {
-      type: Array,
       required: true
     },
     products: {
@@ -61,26 +56,23 @@ export default {
       type: Boolean,
       default: false
     },
-    totalResults: {
+    totalHits: {
       type: Number,
       default: 0
-    },
-    hasResults: {
-      type: Boolean,
-      default: false
     },
     debounceTimeout: {
       type: Number,
       default: 500
+    },
+    api: {
+      type: Function,
+      required: true
     }
   },
   data: () => ({
     debounceSearch: null
   }),
   computed: {
-    hasProductResults() {
-      return this.primaryProductGroups.length;
-    },
     localSearchQuery: {
       get() {
         return this.searchQuery;
@@ -93,10 +85,10 @@ export default {
   watch: {
     localSearchQuery(newVal, oldVal) {
       this.$emit('voyadoSearchOnQueryChange', this.$data);
+      this.$emit('update:isLoading', true);
       this.debounceSearch();
       if (!newVal && !!oldVal) {
-        this.$emit('update:hasResults', false);
-        this.$emit('update:primaryProductGroups', []);
+        this.$emit('update:totalHits', 0);
         this.$emit('update:products', []);
         this.$emit('update:isLoading', false);
         this.onClear();
@@ -107,42 +99,26 @@ export default {
     this.debounceSearch = debounce(this.fetchResults, this.debounceTimeout);
   },
   methods: {
-    esalesApi() {
-      return esales({
-        market: this.market,
-        locale: this.localeIso,
-        clusterId: this.clusterId,
-        touchpoint: 'desktop'
-      });
-    },
     async fetchResults() {
-      this.$emit('update:isLoading', true);
       try {
-        const results = await this.esalesApi().query.autocomplete({
+        const results = await this.api().query.autocomplete({
           q: this.searchQuery,
           limit: 60
         });
 
         console.log(results);
 
-        if (results?.primaryList?.productGroups?.length) {
-          this.$emit(
-            'update:primaryProductGroups',
-            results?.primaryList?.productGroups
-          );
-          this.getAllProducts();
+        this.$emit('update:totalHits', results.totalHits);
+
+        if (results?.productSuggestions) {
+          this.setProductSuggestions(results.productSuggestions);
         }
 
-        if (results?.primaryList?.totalHits) {
-          this.$emit('update:totalResults', results.primaryList.totalHits);
-          this.$emit('update:hasResults', true);
-        }
-
-        if (results?.phraseSuggestions?.length) {
+        if (results?.phraseSuggestions) {
           this.$emit('update:phraseSuggestions', results.phraseSuggestions);
         }
 
-        if (results?.recentSearches?.length) {
+        if (results?.recentSearches) {
           this.$emit('update:recentSearches', results.recentSearches);
         }
       } catch (error) {
@@ -151,16 +127,16 @@ export default {
         this.$emit('update:isLoading', false);
       }
     },
-    getAllProducts() {
+    setProductSuggestions(suggestionGroups) {
       const products = [];
-      this.primaryProductGroups.forEach(item => {
-        item.products.forEach(product => {
-          products.push(product);
-        });
+      suggestionGroups.forEach(group => {
+        // Push first product of every suggestion group
+        products.push(group.products[0]);
       });
       this.$emit('update:products', products);
     },
     onFocus() {
+      this.$emit('update:isLoading', true);
       this.fetchResults();
       this.$emit('voyadoSearchOnFocus', this.$data);
     },
