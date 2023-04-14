@@ -105,6 +105,7 @@
       :disabled="!totalHits"
       type="full-width"
       class="voyado-search-results__button"
+      @clicked="visitSearchPage"
     >
       {{ $tc('VOYADO_SEARCH_RESULTS_BUTTON', totalHits, { hits: totalHits }) }}
     </CaButton>

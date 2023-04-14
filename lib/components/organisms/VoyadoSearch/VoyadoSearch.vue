@@ -129,18 +129,17 @@ export default {
     visitSearchPage() {
       this.$router.push(this.searchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
+      this.onClose();
     },
     onBlur() {},
     onEnter() {
       if (this.searchQuery.length) {
         this.visitSearchPage();
-        this.onClose();
       }
     },
     onSubmit() {
       if (this.searchQuery.length) {
         this.visitSearchPage();
-        this.onClose();
       }
     },
     onClear() {
