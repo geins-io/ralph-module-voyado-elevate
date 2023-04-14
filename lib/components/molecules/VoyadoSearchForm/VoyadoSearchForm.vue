@@ -20,12 +20,20 @@
         @clicked="onClear"
       />
       <CaIconButton
+        v-else
         class="voyado-search-form__button"
         icon-name="search"
         :aria-label="$t('VOYADO_SEARCH_FORM')"
         @clicked="onSubmit"
       />
     </div>
+    <CaIconButton
+      v-if="isFocus"
+      class="voyado-search-form__close only-mobile"
+      icon-name="x"
+      aria-label="Close"
+      @clicked="onClose"
+    />
   </div>
 </template>
 <script>
@@ -67,6 +75,10 @@ export default {
     api: {
       type: Function,
       required: true
+    },
+    isFocus: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -148,6 +160,9 @@ export default {
     },
     onClear() {
       this.$emit('voyadoSearchOnClear', this.$data);
+    },
+    onClose() {
+      this.$emit('voyadoSearchOnClose', this.$data);
     },
     onSubmit() {
       this.$emit('voyadoSearchOnSubmit', this.$data);

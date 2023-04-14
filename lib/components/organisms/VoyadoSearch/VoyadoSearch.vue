@@ -10,12 +10,14 @@
           :total-hits.sync="totalHits"
           :phrase-suggestions.sync="phraseSuggestions"
           :recent-searches.sync="recentSearches"
+          :is-focus="isFocus"
           :api="api"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
           @voyadoSearchOnClear="onClear"
           @voyadoSearchOnSubmit="onSubmit"
+          @voyadoSearchOnClose="onClose"
         />
       </div>
       <div
@@ -39,16 +41,6 @@
           @voyadoSearchOnRouteChange="visitSearchPage"
           @voyadoSearchRemoveRecent="onRemoveRecent"
         />
-        <button
-          v-if="totalHits"
-          type="button"
-          class="voyado-search__close-button only-mobile"
-          @click="onClose"
-        >
-          <CaIconAndText icon-name="x">
-            {{ $t('VOYADO_SEARCH_CLOSE') }}
-          </CaIconAndText>
-        </button>
       </div>
     </div>
     <CaOverlay
@@ -172,11 +164,9 @@ export default {
     async onRemoveRecent() {
       this.isLoading = true;
       try {
-        const results = await this.api().query.removeRecentSearches({
+        await this.api().query.removeRecentSearches({
           removeAll: true
         });
-
-        console.log(results);
       } catch (error) {
         this.$nuxt.error({ statusCode: error.statusCode, message: error });
       } finally {
