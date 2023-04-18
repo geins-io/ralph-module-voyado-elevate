@@ -16,72 +16,25 @@
           :loading="isLoading"
         />
       </div>
-      <div
+      <VoyadoSearchListResults
         v-if="recentSearches.length && !hasResults"
-        class="voyado-search-results__results voyado-search-results__results--suggestions"
-      >
-        <div class="voyado-search-results__top">
-          <h2 class="voyado-search-results__title">
-            {{ $t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE') }}
-          </h2>
-          <button
-            class="voyado-search-results__remove-recent"
-            type="button"
-            @click="removeRecent"
-          >
-            {{ $t('VOYADO_SEARCH_RESULTS_REMOVE_RECENT') }}
-          </button>
-        </div>
-
-        <ul class="voyado-search-results__suggestions-list">
-          <li v-for="(search, index) in recentSearches" :key="index">
-            <CaClickable
-              class="voyado-search-results__suggestion"
-              @clicked="setQuery(search.q)"
-            >
-              <span class="voyado-search-results__suggestion-text">
-                {{ search.q }}
-              </span>
-              <CaIconButton
-                class="voyado-search-results__search-icon"
-                icon-name="search"
-                :aria-label="$t('SEARCH')"
-              />
-            </CaClickable>
-          </li>
-        </ul>
-      </div>
-      <div
+        mode="recent"
+        :title="$t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE')"
+        :result-list="recentSearches"
+        :search-query="searchQuery"
+        class="voyado-search-results__results voyado-search-results__results--list"
+        @voyadoSearchRemoveRecent="removeRecent"
+        @voyadoSearchSetQuery="setQuery"
+      />
+      <VoyadoSearchListResults
         v-if="phraseSuggestions.length"
-        class="voyado-search-results__results voyado-search-results__results--suggestions"
-      >
-        <div v-if="!searchQuery" class="voyado-search-results__top">
-          <h2 class="voyado-search-results__title">
-            {{ $t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE') }}
-          </h2>
-        </div>
-
-        <ul class="voyado-search-results__suggestions-list">
-          <li v-for="(suggestion, index) in phraseSuggestions" :key="index">
-            <CaClickable
-              class="voyado-search-results__suggestion"
-              @clicked="setQuery(suggestion.q)"
-            >
-              <!-- eslint-disable vue/no-v-html -->
-              <!-- eslint-disable vue/no-v-text-v-html-on-component -->
-              <span
-                class="voyado-search-results__suggestion-text"
-                v-html="formatHighlighted(suggestion.highlighted)"
-              />
-              <CaIconButton
-                class="voyado-search-results__search-icon"
-                icon-name="search"
-                :aria-label="$t('SEARCH')"
-              />
-            </CaClickable>
-          </li>
-        </ul>
-      </div>
+        mode="suggestions"
+        :title="$t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE')"
+        :result-list="phraseSuggestions"
+        :search-query="searchQuery"
+        class="voyado-search-results__results voyado-search-results__results--list"
+        @voyadoSearchSetQuery="setQuery"
+      />
       <div
         v-if="hasResults"
         class="voyado-search-results__results voyado-search-results__results--products"
