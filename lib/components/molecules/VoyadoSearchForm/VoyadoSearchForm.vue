@@ -8,7 +8,6 @@
         autocomplete="off"
         :aria-label="$t('VOYADO_SEARCH_FORM')"
         :placeholder="$t('VOYADO_SEARCH_FORM_PLACEHOLDER')"
-        @input="onSearchInput"
         @focus="onFocus"
         @blur="onBlur"
         @keyup.enter="onEnter"
@@ -21,16 +20,24 @@
         @clicked="onClear"
       />
       <CaIconButton
+        v-else
         class="voyado-search-form__button"
         icon-name="search"
         :aria-label="$t('VOYADO_SEARCH_FORM')"
         @clicked="onSubmit"
       />
     </div>
+    <CaIconButton
+      v-if="isFocus"
+      class="voyado-search-form__close only-mobile"
+      icon-name="x"
+      aria-label="Close"
+      @clicked="onClose"
+    />
   </div>
 </template>
 <script>
-import { esales } from '@apptus/esales-api';
+import { debounce } from 'lodash';
 import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 export default {
@@ -39,15 +46,17 @@ export default {
   props: {
     searchQuery: {
       type: String,
-      required: true,
-      default: ''
-    },
-    primaryProductGroups: {
-      type: Array,
-      required: true,
-      default: () => []
+      required: true
     },
     products: {
+      type: Array,
+      default: () => []
+    },
+    phraseSuggestions: {
+      type: Array,
+      default: () => []
+    },
+    recentSearches: {
       type: Array,
       default: () => []
     },
@@ -55,19 +64,27 @@ export default {
       type: Boolean,
       default: false
     },
-    totalResults: {
+    totalHits: {
       type: Number,
       default: 0
     },
-    hasResults: {
+    debounceTimeout: {
+      type: Number,
+      default: 500
+    },
+    api: {
+      type: Function,
+      required: true
+    },
+    isFocus: {
       type: Boolean,
       default: false
     }
   },
+  data: () => ({
+    debounceSearch: null
+  }),
   computed: {
-    hasProductResults() {
-      return this.primaryProductGroups.length;
-    },
     localSearchQuery: {
       get() {
         return this.searchQuery;
@@ -77,68 +94,62 @@ export default {
       }
     }
   },
-  methods: {
-    esalesApi() {
-      return esales({
-        market: this.market,
-        locale: this.localeIso,
-        clusterId: this.clusterId,
-        touchpoint: 'desktop'
-      });
-    },
-    async fetchResults() {
+  watch: {
+    localSearchQuery(newVal, oldVal) {
+      this.$emit('voyadoSearchOnQueryChange', this.$data);
       this.$emit('update:isLoading', true);
-
-      if (this.searchQuery.length) {
-        try {
-          const results = await this.esalesApi().query.searchPage({
-            q: this.searchQuery,
-            limit: 60
-          });
-
-          if (results?.primaryList?.productGroups?.length) {
-            this.$emit(
-              'update:primaryProductGroups',
-              results?.primaryList?.productGroups || []
-            );
-            this.getAllProducts();
-          }
-
-          if (results?.primaryList?.totalHits) {
-            this.$emit('update:totalResults', results.primaryList.totalHits);
-            this.$emit('update:hasResults', true);
-          }
-        } catch (error) {
-          this.$nuxt.error({ statusCode: error.statusCode, message: error });
-        } finally {
-          this.$emit('update:isLoading', false);
-        }
-      } else {
-        this.$emit('update:hasResults', false);
-        this.$emit('update:primaryProductGroups', []);
+      this.debounceSearch();
+      if (!newVal && !!oldVal) {
+        this.$emit('update:totalHits', 0);
         this.$emit('update:products', []);
         this.$emit('update:isLoading', false);
         this.onClear();
       }
-    },
-    // @vuese
-    // Perform search
-    onSearchInput() {
-      this.$nextTick(() => {
-        this.fetchResults();
-        this.$emit('voyadoSearchOnInput', this.$data);
-      });
-    },
-    getAllProducts() {
-      const products = [];
-      this.primaryProductGroups.forEach(item => {
-        item.products.forEach(product => {
-          products.push(product);
+    }
+  },
+  created() {
+    this.debounceSearch = debounce(this.fetchResults, this.debounceTimeout);
+  },
+  methods: {
+    async fetchResults() {
+      try {
+        const results = await this.api().query.autocomplete({
+          q: this.searchQuery,
+          limit: 60
         });
+
+        console.log(results);
+
+        this.$emit('update:totalHits', results.totalHits);
+
+        if (results?.productSuggestions) {
+          this.setProductSuggestions(results.productSuggestions);
+        }
+
+        if (results?.phraseSuggestions) {
+          this.$emit('update:phraseSuggestions', results.phraseSuggestions);
+        }
+
+        if (results?.recentSearches) {
+          this.$emit('update:recentSearches', results.recentSearches);
+        }
+      } catch (error) {
+        this.$nuxt.error({ statusCode: error.statusCode, message: error });
+      } finally {
+        this.$emit('update:isLoading', false);
+      }
+    },
+    setProductSuggestions(suggestionGroups) {
+      const products = [];
+      suggestionGroups.forEach(group => {
+        // Push first product of every suggestion group
+        products.push(group.products[0]);
       });
       this.$emit('update:products', products);
     },
     onFocus() {
+      this.$emit('update:isLoading', true);
+      this.fetchResults();
       this.$emit('voyadoSearchOnFocus', this.$data);
     },
     onBlur() {
@@ -149,6 +160,9 @@ export default {
     },
     onClear() {
       this.$emit('voyadoSearchOnClear', this.$data);
+    },
+    onClose() {
+      this.$emit('voyadoSearchOnClose', this.$data);
     },
     onSubmit() {
       this.$emit('voyadoSearchOnSubmit', this.$data);

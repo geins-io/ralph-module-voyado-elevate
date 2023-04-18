@@ -1,48 +1,67 @@
 <template>
-  <div class="voyado-search-results">
-    <CaSpinner
-      v-if="isLoading"
-      class="voyado-search-results__spinner"
-      :class="{
-        empty: !hasProducts
-      }"
-      :loading="isLoading"
-    />
-    <div
-      v-if="hasProducts"
-      class="voyado-search-results__results voyado-search-results__results--products"
-    >
-      <div class="voyado-search-results__top">
-        <h2 class="voyado-search-results__title">
-          {{ $t('VOYADO_SEARCH_RESULTS_TITLE') }}
-        </h2>
-        <button
-          class="voyado-search-results__see-all-button"
-          type="button"
-          @click="visitSearchPage"
-        >
-          <CaIconAndText
-            class="voyado-search-results__see-all-text"
-            icon-name="arrow-right"
-            icon-position="right"
-          >
-            {{ $t('VOYADO_SEARCH_RESULTS_SEE_ALL') }}
-          </CaIconAndText>
-        </button>
+  <div
+    class="voyado-search-results"
+    :class="{
+      'voyado-search-results--empty':
+        !recentSearches.length &&
+        !phraseSuggestions.length &&
+        !hasResults &&
+        isLoading
+    }"
+  >
+    <div class="voyado-search-results__container">
+      <div v-if="isLoading" class="voyado-search-results__loading">
+        <CaSpinner
+          class="voyado-search-results__spinner"
+          :loading="isLoading"
+        />
       </div>
-      <VoyadoSearchProductResults :products="products" />
+      <VoyadoSearchListResults
+        v-if="recentSearches.length && !hasResults"
+        mode="recent"
+        :title="$t('VOYADO_SEARCH_RECENT_SEARCHES_TITLE')"
+        :result-list="recentSearches"
+        :search-query="searchQuery"
+        class="voyado-search-results__results voyado-search-results__results--list"
+        @voyadoSearchRemoveRecent="removeRecent"
+        @voyadoSearchSetQuery="setQuery"
+      />
+      <VoyadoSearchListResults
+        v-if="phraseSuggestions.length"
+        mode="suggestions"
+        :title="$t('VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE')"
+        :result-list="phraseSuggestions"
+        :search-query="searchQuery"
+        class="voyado-search-results__results voyado-search-results__results--list"
+        @voyadoSearchSetQuery="setQuery"
+      />
+      <div
+        v-if="hasResults"
+        class="voyado-search-results__results voyado-search-results__results--products"
+      >
+        <VoyadoSearchProductResults :products="products" />
+      </div>
+      <div
+        v-else-if="searchQuery && !hasResults && !isLoading"
+        class="voyado-search-results__results voyado-search-results__results--empty"
+      >
+        <p>
+          {{ $t('VOYADO_SEARCH_RESULTS_NO_MATCH') }}
+        </p>
+      </div>
     </div>
-    <div
-      v-else-if="!hasProducts && !isLoading"
-      class="voyado-search-results__results voyado-search-results__results--empty"
+    <CaButton
+      v-if="
+        ((!searchQuery || !!totalHits) && !isLoading) ||
+          (isLoading && searchQuery)
+      "
+      :disabled="!totalHits"
+      type="full-width"
+      class="voyado-search-results__button"
+      @clicked="visitSearchPage"
     >
-      <p v-if="searchQuery.length === 0">
-        {{ $t('VOYADO_SEARCH_RESULTS_EMPTY_QUERY') }}
-      </p>
-      <p v-else>
-        {{ $t('VOYADO_SEARCH_RESULTS_NO_MATCH') }}
-      </p>
-    </div>
+      {{ $tc('VOYADO_SEARCH_RESULTS_BUTTON', totalHits, { hits: totalHits }) }}
+    </CaButton>
   </div>
 </template>
 <script>
@@ -61,7 +80,7 @@ export default {
       type: Boolean,
       default: false
     },
-    totalResults: {
+    totalHits: {
       type: Number,
       default: 0
     },
@@ -69,7 +88,15 @@ export default {
       type: String,
       default: ''
     },
-    hasProducts: {
+    phraseSuggestions: {
+      type: Array,
+      default: () => []
+    },
+    recentSearches: {
+      type: Array,
+      default: () => []
+    },
+    hasResults: {
       type: Boolean,
       default: false
     }
@@ -77,6 +104,16 @@ export default {
   methods: {
     visitSearchPage() {
       this.$emit('voyadoSearchOnRouteChange');
+    },
+    setQuery(q) {
+      this.$emit('update:searchQuery', q);
+    },
+    formatHighlighted(text) {
+      const formattedText = text.replace(/{(.*?)}/g, '<strong>$1</strong>');
+      return formattedText;
+    },
+    removeRecent() {
+      this.$emit('voyadoSearchRemoveRecent');
     }
   }
 };

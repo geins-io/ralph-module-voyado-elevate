@@ -5,16 +5,19 @@
         <VoyadoSearchForm
           class="voyado-search__form"
           :search-query.sync="searchQuery"
-          :primary-product-groups.sync="primaryProductGroups"
           :products.sync="products"
           :is-loading.sync="isLoading"
-          :has-results.sync="hasResults"
-          :total-results.sync="totalResults"
+          :total-hits.sync="totalHits"
+          :phrase-suggestions.sync="phraseSuggestions"
+          :recent-searches.sync="recentSearches"
+          :is-focus="isFocus"
+          :api="api"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
           @voyadoSearchOnClear="onClear"
           @voyadoSearchOnSubmit="onSubmit"
+          @voyadoSearchOnClose="onClose"
         />
       </div>
       <div
@@ -22,32 +25,22 @@
         class="voyado-search__results-container"
         :class="{
           'voyado-search__results-container--loading': isLoading,
-          'voyado-search__results-container--loading-empty':
-            isLoading && !hasProductResults,
-          'voyado-search__results-container--empty': !hasResults,
           'voyado-search__results-container--suggestions':
-            !isLoading && isFocus && !hasResults
+            !isLoading && isFocus && !totalHits
         }"
       >
         <VoyadoSearchResults
           :products="productResults"
-          :total-results="totalResults"
+          :total-hits="totalHits"
           :is-loading="isLoading"
           :is-focus="isFocus"
-          :search-query="searchQuery"
-          :has-products="hasProductResults"
+          :search-query.sync="searchQuery"
+          :phrase-suggestions="phraseSuggestions"
+          :recent-searches="recentSearches"
+          :has-results="hasResults"
           @voyadoSearchOnRouteChange="visitSearchPage"
+          @voyadoSearchRemoveRecent="onRemoveRecent"
         />
-        <button
-          v-if="hasResults"
-          type="button"
-          class="voyado-search__close-button only-mobile"
-          @click="onClose"
-        >
-          <CaIconAndText icon-name="x">
-            {{ $t('VOYADO_SEARCH_CLOSE') }}
-          </CaIconAndText>
-        </button>
       </div>
     </div>
     <CaOverlay
@@ -59,6 +52,8 @@
 </template>
 <script>
 import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
+import { esales } from '@apptus/esales-api';
+
 import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 // @group Molecules
@@ -74,7 +69,7 @@ export default {
     },
     productResultsLimit: {
       type: Number,
-      default: 10
+      default: 3
     }
   },
   data: () => ({
@@ -82,10 +77,10 @@ export default {
     isLoading: false,
     isFocus: false,
     products: [],
-    primaryProductGroups: [],
-    totalResults: 0,
+    totalHits: 0,
     searchStorage: null,
-    hasResults: false
+    phraseSuggestions: [],
+    recentSearches: []
   }),
   computed: {
     modifiers() {
@@ -94,9 +89,6 @@ export default {
         'voyado-search--focus': this.isFocus
       };
     },
-    hasProductResults() {
-      return !!this.products.length;
-    },
     productResults() {
       return this.products.slice(0, this.productResultsLimit);
     },
@@ -104,6 +96,9 @@ export default {
       const index =
         this.$getPath('index') === '/' ? '' : this.$getPath('index');
       return index + this.$config.routePaths.search + '/' + this.searchQuery;
+    },
+    hasResults() {
+      return this.totalHits > 0 && !!this.searchQuery;
     }
   },
   watch: {
@@ -123,27 +118,28 @@ export default {
     eventbus.$off('route-change');
   },
   methods: {
+    api() {
+      return esales({
+        market: this.market,
+        locale: this.localeIso,
+        clusterId: this.clusterId,
+        touchpoint: 'desktop'
+      });
+    },
     visitSearchPage() {
       this.$router.push(this.searchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
+      this.onClose();
     },
-    onBlur() {
-      this.$nextTick(() => {
-        if (this.searchQuery === '') {
-          this.onClose();
-        }
-      });
-    },
+    onBlur() {},
     onEnter() {
       if (this.searchQuery.length) {
         this.visitSearchPage();
-        this.onClose();
       }
     },
     onSubmit() {
       if (this.searchQuery.length) {
         this.visitSearchPage();
-        this.onClose();
       }
     },
     onClear() {
@@ -160,10 +156,21 @@ export default {
     },
     onClose() {
       document.body.style.overflow = null;
-      this.hasResults = false;
       this.isFocus = false;
       this.onClear();
       this.$emit('voyadoSearchOnClose');
+    },
+    async onRemoveRecent() {
+      this.isLoading = true;
+      try {
+        await this.api().query.removeRecentSearches({
+          removeAll: true
+        });
+      } catch (error) {
+        this.$nuxt.error({ statusCode: error.statusCode, message: error });
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
 };

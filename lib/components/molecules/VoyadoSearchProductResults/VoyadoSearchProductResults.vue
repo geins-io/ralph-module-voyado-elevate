@@ -33,14 +33,16 @@
             alt="placeholder"
           />
           <div class="voyado-search-product-results__info">
-            <div class="voyado-search-product-results__item-name">
-              {{ product.title }}
-            </div>
-            <div class="voyado-search-product-results__price">
-              <span class="voyado-search-product-results__selling">
-                {{ product.sellingPrice.min }}
+            <div class="ca-price">
+              <span class="ca-price__selling">
+                {{ formatCurrency(product.sellingPrice.min) }}
               </span>
             </div>
+            <CaBrandAndName
+              :brand="product.brand"
+              :name="product.title"
+              name-tag="h3"
+            />
           </div>
         </NuxtLink>
       </li>
@@ -48,8 +50,10 @@
   </div>
 </template>
 <script>
+import MixNumberFormat from 'MixNumberFormat';
 export default {
   name: 'VoyadoSearchProductResults',
+  mixins: [MixNumberFormat],
   props: {
     products: {
       type: Array,
