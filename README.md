@@ -15,10 +15,10 @@ To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it
 
 ```bash
 # Install the package using npm:
-npm install ralph-module-voyado-elevate
+npm install @geins/ralph-module-voyado-elevate
 ```
 
-Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `ralph-module-voyado-elevate` object:
+Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `@geins/ralph-module-voyado-elevate` object:
 
 ```javascript
 // nuxt.config.js
@@ -26,7 +26,7 @@ Once installed, you can add the module to your Nuxt2 app by updating the modules
 module.exports = {
   modules: [
     [
-      'ralph-module-voyado-elevate',
+      '@geins/ralph-module-voyado-elevate',
       // Configuration options for the Ralph Module for Voyado Elevate
       {
         // Set to true to enable the module
@@ -72,7 +72,6 @@ After installing the module, you can use its components in your Nuxt2 app by imp
 <template>
   <div>
     <VoyadoSearch
-      :cluster-id="clusterId"
       :is-visible="isVisible"
       @voyadoSearchOnClose="onSearchClose"
       @voyadoSearchOnRouteChange="onSearchRouteChange"
@@ -83,7 +82,6 @@ After installing the module, you can use its components in your Nuxt2 app by imp
 <script>
 export default {
   data: () => ({
-    clusterId: 'your_cluster_id',
     isVisible: true
   }),
   methods: {
@@ -97,14 +95,6 @@ export default {
 };
 </script>
 ```
-
-## Required props
-
-| Prop      | Type   | Value                         |
-| --------- | ------ | ----------------------------- |
-| clusterId | String | `YOUR_CLUSTER_ID_FROM_VOYADO` |
-
-> NOTE: Values are example data
 
 ## Translations
 
@@ -162,3 +152,8 @@ MIT
 ## Note
 
 This module requires Nuxt2 to work properly.
+
+[npm]: https://img.shields.io/npm/v/@geins/ralph-module-voyado-elevate
+[npm-url]: https://www.npmjs.com/package/@geins/ralph-module-voyado-elevate
+[npm-downloads-per-month]: https://img.shields.io/npm/dm/@geins/ralph-module-voyado-elevate.svg
+[npm-trends]: https://npmtrends.com/@geins/ralph-module-voyado-elevate
