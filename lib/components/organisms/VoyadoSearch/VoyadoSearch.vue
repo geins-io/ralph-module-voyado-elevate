@@ -30,7 +30,7 @@
         }"
       >
         <VoyadoSearchResults
-          :products="productResults"
+          :products="products"
           :total-hits="totalHits"
           :is-loading="isLoading"
           :is-focus="isFocus"
@@ -66,10 +66,6 @@ export default {
     isVisible: {
       type: Boolean,
       default: true
-    },
-    productResultsLimit: {
-      type: Number,
-      default: 3
     }
   },
   data: () => ({
@@ -88,9 +84,6 @@ export default {
         'voyado-search--visible': this.isVisible,
         'voyado-search--focus': this.isFocus
       };
-    },
-    productResults() {
-      return this.products.slice(0, this.productResultsLimit);
     },
     searchPageUrl() {
       const index =
