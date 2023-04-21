@@ -51,10 +51,10 @@
   </div>
 </template>
 <script>
-import eventbus from 'ralph-module-voyado-elevate/lib/module.eventbus';
+import eventbus from '@geins/ralph-module-voyado-elevate/lib/module.eventbus';
 import { esales } from '@apptus/esales-api';
 
-import VoyadoProps from 'ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
+import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 // @group Molecules
 // The search including search results<br><br>

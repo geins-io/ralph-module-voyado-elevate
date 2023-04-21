@@ -1,3 +1,6 @@
+[![NPM Package][npm]][npm-url]
+[![NPM Downloads][npm-downloads-per-month]][npm-trends]
+
 # Ralph Module for Voyado Elevate
 
 > Component library for Voyado Elevate integrations with Ralph Storefront
@@ -6,37 +9,16 @@ We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/packag
 
 > A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
 
-## TODO
-
-### Must have
-
-- Support results for "didYouMean"
-- Handling of price & currency (or just show the lowest current price as a first step?)
-- Publish module to npm to enable installation on customer repo
-
-### Nice to have
-
-- Support results for "relatedSearches"
-- Support results for "secondaryList"
-- Support results for "contentLists"
-- Enable support for module options (clusterId etc) in customer repo
-- Transpile @apptus/esales-api in this module instead of customer repo
-
-### Further development ideas
-
-- Support for other infrastructure in this module like nuxt.config.js?
-- Handle extended store in this module?
-
 ## Installation
 
 To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it from npm using the following command:
 
 ```bash
 # Install the package using npm:
-npm install ralph-module-voyado-elevate
+npm install @geins/ralph-module-voyado-elevate
 ```
 
-Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `ralph-module-voyado-elevate` object:
+Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `@geins/ralph-module-voyado-elevate` object:
 
 ```javascript
 // nuxt.config.js
@@ -44,7 +26,7 @@ Once installed, you can add the module to your Nuxt2 app by updating the modules
 module.exports = {
   modules: [
     [
-      'ralph-module-voyado-elevate',
+      '@geins/ralph-module-voyado-elevate',
       // Configuration options for the Ralph Module for Voyado Elevate
       {
         // Set to true to enable the module
@@ -90,7 +72,6 @@ After installing the module, you can use its components in your Nuxt2 app by imp
 <template>
   <div>
     <VoyadoSearch
-      :cluster-id="clusterId"
       :is-visible="isVisible"
       @voyadoSearchOnClose="onSearchClose"
       @voyadoSearchOnRouteChange="onSearchRouteChange"
@@ -101,7 +82,6 @@ After installing the module, you can use its components in your Nuxt2 app by imp
 <script>
 export default {
   data: () => ({
-    clusterId: 'your_cluster_id',
     isVisible: true
   }),
   methods: {
@@ -115,14 +95,6 @@ export default {
 };
 </script>
 ```
-
-## Required props
-
-| Prop      | Type   | Value                         |
-| --------- | ------ | ----------------------------- |
-| clusterId | String | `YOUR_CLUSTER_ID_FROM_VOYADO` |
-
-> NOTE: Values are example data
 
 ## Translations
 
@@ -180,3 +152,8 @@ MIT
 ## Note
 
 This module requires Nuxt2 to work properly.
+
+[npm]: https://img.shields.io/npm/v/@geins/ralph-module-voyado-elevate
+[npm-url]: https://www.npmjs.com/package/@geins/ralph-module-voyado-elevate
+[npm-downloads-per-month]: https://img.shields.io/npm/dm/@geins/ralph-module-voyado-elevate.svg
+[npm-trends]: https://npmtrends.com/@geins/ralph-module-voyado-elevate

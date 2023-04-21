@@ -1,6 +1,6 @@
 {
-  "name": "ralph-module-voyado-elevate",
-  "version": "1.0.0",
+  "name": "@geins/ralph-module-voyado-elevate",
+  "version": "1.0.6",
   "description": "Component library for Voyado Elevate integrations with Ralph Storefront",
   "author": {
     "name": "Geins"
@@ -48,6 +48,8 @@
     ]
   },
   "dependencies": {
-    "consola": "^2.3.2"
+    "chalk": "^5.2.0",
+    "consola": "^3.1.0",
+    "semver": "^7.5.0"
   }
 }
