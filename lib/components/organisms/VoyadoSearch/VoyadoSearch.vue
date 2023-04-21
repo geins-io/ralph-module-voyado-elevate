@@ -54,7 +54,7 @@
 import eventbus from '@geins/ralph-module-voyado-elevate/lib/module.eventbus';
 import { esales } from '@apptus/esales-api';
 
-import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.js';
+import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 // @group Molecules
 // The search including search results<br><br>
