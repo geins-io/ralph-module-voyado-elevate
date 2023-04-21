@@ -38,7 +38,7 @@
 </template>
 <script>
 import { debounce } from 'lodash';
-import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
+import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.js';
 
 export default {
   name: 'VoyadoSearchForm',
