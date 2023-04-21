@@ -1,6 +1,6 @@
 {
   "name": "@geins/ralph-module-voyado-elevate",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Component library for Voyado Elevate integrations with Ralph Storefront",
   "author": {
     "name": "Geins"
@@ -28,6 +28,8 @@
     "@nuxtjs/eslint-config": "^4.0.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
+    "chalk": "^5.2.0",
+    "consola": "^3.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-nuxt": "^1.0.0",
@@ -38,6 +40,7 @@
     "nuxt": "^2.4.0",
     "prettier": "^1.19.1",
     "puppeteer": "^1.6.1",
+    "semver": "^7.5.0",
     "stylelint": "^13.13.1",
     "vue": "^2.7.14"
   },
@@ -47,7 +50,5 @@
       "lib/**/*.{js,jsx}"
     ]
   },
-  "dependencies": {
-    "consola": "^2.3.2"
-  }
+  "dependencies": {}
 }
