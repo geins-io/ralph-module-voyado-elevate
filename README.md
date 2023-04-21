@@ -1,3 +1,6 @@
+[![NPM Package][npm]][npm-url]
+[![NPM Downloads][npm-downloads-per-month]][npm-trends]
+
 # Ralph Module for Voyado Elevate
 
 > Component library for Voyado Elevate integrations with Ralph Storefront
