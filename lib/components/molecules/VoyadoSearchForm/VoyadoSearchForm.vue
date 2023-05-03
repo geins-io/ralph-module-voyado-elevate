@@ -38,11 +38,10 @@
 </template>
 <script>
 import { debounce } from 'lodash';
-import VoyadoProps from '@geins/ralph-module-voyado-elevate/lib/components/mixins/VoyadoProps.mjs';
 
 export default {
   name: 'VoyadoSearchForm',
-  mixins: [VoyadoProps],
+  mixins: [],
   props: {
     searchQuery: {
       type: String,
@@ -114,11 +113,8 @@ export default {
     async fetchResults() {
       try {
         const results = await this.api().query.autocomplete({
-          q: this.searchQuery,
-          limit: 60
+          q: this.searchQuery
         });
-
-        console.log(results);
 
         this.$emit('update:totalHits', results.totalHits);
 

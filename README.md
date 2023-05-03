@@ -96,6 +96,16 @@ export default {
 </script>
 ```
 
+## Props
+
+| Name              | Type    | Default                                                      | Description                                                                      |
+| ----------------- | ------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| isVisible         | Boolean | false                                                        | Sets the voyado-search--visible class. Can be used to toggle search from outside |
+| currentClusterId  | String  | this.\$voyado.clusterId                                      | The cluserId sent to Voyado                                                      |
+| currentMarket     | String  | this.\$store.state.channel.currentMarket                     | The market sent to Voyado                                                        |
+| currentLocale     | String  | this.\$i18n.localeProperties.iso                             | The locale sent to Voyado                                                        |
+| currentTouchpoint | String  | 'mobile' or 'desktop' based on this.\$store.getters.viewport | The touchpoint sent to Voyado                                                    |
+
 ## Translations
 
 Available translations:

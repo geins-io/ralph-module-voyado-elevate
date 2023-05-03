@@ -114,9 +114,9 @@ export default {
     api() {
       return esales({
         market: this.market,
-        locale: this.localeIso,
+        locale: this.locale,
         clusterId: this.clusterId,
-        touchpoint: 'desktop'
+        touchpoint: this.touchpoint
       });
     },
     visitSearchPage() {
