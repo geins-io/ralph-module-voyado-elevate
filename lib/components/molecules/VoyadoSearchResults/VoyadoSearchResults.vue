@@ -39,7 +39,10 @@
         v-if="hasResults"
         class="voyado-search-results__results voyado-search-results__results--products"
       >
-        <VoyadoSearchProductResults :products="products" />
+        <VoyadoSearchProductResults
+          :products="products"
+          @voyadoSearchOnProductClick="$emit('voyadoSearchOnProductClick')"
+        />
       </div>
       <div
         v-else-if="searchQuery && !hasResults && !isLoading"

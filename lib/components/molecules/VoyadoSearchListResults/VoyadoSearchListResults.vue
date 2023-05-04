@@ -22,6 +22,12 @@
         <CaClickable
           class="voyado-search-list-results__suggestion"
           @clicked="setQuery(result.q)"
+          @click.native="
+            $store.dispatch('events/push', {
+              type: 'search:click',
+              data: { type: 'suggestion', data: result }
+            })
+          "
         >
           <!-- eslint-disable vue/no-v-html -->
           <!-- eslint-disable vue/no-v-text-v-html-on-component -->

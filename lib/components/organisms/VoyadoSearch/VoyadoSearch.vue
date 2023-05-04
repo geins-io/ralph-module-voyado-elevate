@@ -40,6 +40,7 @@
           :has-results="hasResults"
           @voyadoSearchOnRouteChange="visitSearchPage"
           @voyadoSearchRemoveRecent="onRemoveRecent"
+          @voyadoSearchOnProductClick="onClose"
         />
       </div>
     </div>

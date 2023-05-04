@@ -15,6 +15,7 @@
           class="voyado-search-product-results__link voyado-search-product-results__link--product"
           :to="product.link"
           :title="product.title"
+          @click.native="clickHandler(product)"
         >
           <CaImage
             v-if="product.imageInfo.thumbnail"
@@ -65,6 +66,13 @@ export default {
     getImageFilename(imageUrl) {
       const filename = imageUrl.split('/').pop();
       return filename;
+    },
+    clickHandler(product) {
+      this.$emit('voyadoSearchOnProductClick');
+      this.$store.dispatch('events/push', {
+        type: 'search:click',
+        data: { type: 'product', data: product }
+      });
     }
   }
 };
