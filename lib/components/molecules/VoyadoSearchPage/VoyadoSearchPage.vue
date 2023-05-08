@@ -69,12 +69,14 @@ export default {
       try {
         const data = await this.api().query.searchPage({
           q: this.query,
-          limit: 100
+          limit: 100,
+          presentCustom: 'ralph_data'
         });
 
-        this.list = data;
+        const products = data?.primaryList?.productGroups;
+        this.list = this.transformProductsDataForRalph(products);
         console.log(
-          '🚀 ~ file: VoyadoSearchPage.vue:76 ~ fetchSearchPage ~ this.list:',
+          '🚀 ~ file: VoyadoSearchPage.vue:78 ~ fetchSearchPage ~ this.list:',
           this.list
         );
       } catch (error) {
@@ -82,6 +84,20 @@ export default {
       } finally {
         this.isLoading = false;
       }
+    },
+    transformProductsDataForRalph(products) {
+      const transformedData = products.map(product => {
+        let prod = null;
+        try {
+          // console.log(product.products[0].custom.ralph_data[0].label);
+          prod = JSON.parse(product.products[0].custom.ralph_data[0].label);
+        } catch (error) {
+          //  console.log('Could not parse product data', error);
+        }
+        return prod;
+      });
+
+      return transformedData.filter(product => product !== null);
     }
   }
 };
