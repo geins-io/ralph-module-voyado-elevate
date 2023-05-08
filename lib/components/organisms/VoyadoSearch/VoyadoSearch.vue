@@ -3,6 +3,7 @@
     <div ref="search" class="voyado-search" :class="modifiers">
       <div class="voyado-search__bar">
         <VoyadoSearchForm
+          ref="searchForm"
           class="voyado-search__form"
           :search-query.sync="searchQuery"
           :products.sync="products"
@@ -188,9 +189,7 @@ export default {
     async onRemoveRecent() {
       this.isLoading = true;
       try {
-        await this.api().query.removeRecentSearches({
-          removeAll: true
-        });
+        await this.api().notify.removeRecentSearches('removeAll');
       } catch (error) {
         this.$nuxt.error({ statusCode: error.statusCode, message: error });
       } finally {
