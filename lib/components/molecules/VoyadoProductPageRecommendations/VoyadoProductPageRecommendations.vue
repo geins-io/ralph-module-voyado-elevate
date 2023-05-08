@@ -76,10 +76,24 @@ export default {
     },
     async fetchRecommendations() {
       try {
-        const data = await this.api().query.productPage({
-          productKey: this.productKey,
-          limit: 10
-        });
+        const data = await this.api().query.productPage(
+          {
+            productKey: this.productKey,
+            presentCustom: 'ralph_data'
+          },
+          {
+            recommendationLists: [
+              {
+                id: 'ALTERNATIVES',
+                algorithm: 'ALTERNATIVES'
+              },
+              {
+                id: 'UPSELL',
+                algorithm: 'UPSELL'
+              }
+            ]
+          }
+        );
 
         this.recommendationLists = data;
         console.log(
