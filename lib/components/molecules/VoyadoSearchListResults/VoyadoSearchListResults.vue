@@ -1,5 +1,8 @@
 <template>
-  <div class="voyado-search-list-results">
+  <div
+    class="voyado-search-list-results"
+    :class="{ 'voyado-search-list-results--hidden': removed }"
+  >
     <div
       v-if="isRecent || (isSuggestions && !searchQuery)"
       class="voyado-search-list-results__top"
@@ -72,7 +75,9 @@ export default {
       default: ''
     }
   },
-  data: () => ({}),
+  data: () => ({
+    removed: false
+  }),
   computed: {
     isRecent() {
       return this.mode === 'recent';
@@ -81,11 +86,18 @@ export default {
       return this.mode === 'suggestions';
     }
   },
-  watch: {},
+  watch: {
+    resultList(val) {
+      if (val.length) {
+        this.removed = false;
+      }
+    }
+  },
   mounted() {},
   methods: {
     removeRecent() {
       this.$emit('voyadoSearchRemoveRecent');
+      this.removed = true;
     },
     setQuery(q) {
       this.$emit('voyadoSearchSetQuery', q);
