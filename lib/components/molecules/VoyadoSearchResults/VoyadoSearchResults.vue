@@ -110,6 +110,7 @@ export default {
     },
     setQuery(q) {
       this.$emit('update:searchQuery', q);
+      this.$emit('voyadoSearchOnRouteChange');
     },
     formatHighlighted(text) {
       const formattedText = text.replace(/{(.*?)}/g, '<strong>$1</strong>');

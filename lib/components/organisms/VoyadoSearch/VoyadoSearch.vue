@@ -3,6 +3,7 @@
     <div ref="search" class="voyado-search" :class="modifiers">
       <div class="voyado-search__bar">
         <VoyadoSearchForm
+          ref="searchForm"
           class="voyado-search__form"
           :search-query.sync="searchQuery"
           :products.sync="products"
@@ -11,7 +12,6 @@
           :phrase-suggestions.sync="phraseSuggestions"
           :recent-searches.sync="recentSearches"
           :is-focus="isFocus"
-          :api="api"
           @voyadoSearchOnFocus="onFocus"
           @voyadoSearchOnBlur="onBlur"
           @voyadoSearchOnEnter="onEnter"
@@ -53,8 +53,7 @@
 </template>
 <script>
 import eventbus from '@geins/ralph-module-voyado-elevate/lib/module.eventbus';
-import { esales } from '@apptus/esales-api';
-
+import { mapState } from 'vuex';
 // @group Molecules
 // The search including search results<br><br>
 // **SASS-path:** _./styles/components/molecules/voyado-search.scss_
@@ -65,22 +64,6 @@ export default {
     isVisible: {
       type: Boolean,
       default: true
-    },
-    currentClusterId: {
-      type: String,
-      default: ''
-    },
-    currentMarket: {
-      type: String,
-      default: ''
-    },
-    currentLocale: {
-      type: String,
-      default: ''
-    },
-    currentTouchpoint: {
-      type: String,
-      default: ''
     }
   },
   data: () => ({
@@ -94,23 +77,6 @@ export default {
     recentSearches: []
   }),
   computed: {
-    clusterId() {
-      return this.currentClusterId || this.$voyado?.clusterId || '';
-    },
-    market() {
-      return (
-        this.currentMarket || this.$store?.state?.channel?.currentMarket || ''
-      );
-    },
-    locale() {
-      return this.currentLocale || this.$i18n?.localeProperties?.iso || '';
-    },
-    touchpoint() {
-      return (
-        this.currentTouchpoint ||
-        (this.$store?.getters?.viewport === 'phone' ? 'mobile' : 'desktop')
-      );
-    },
     modifiers() {
       return {
         'voyado-search--visible': this.isVisible,
@@ -124,7 +90,8 @@ export default {
     },
     hasResults() {
       return this.totalHits > 0 && !!this.searchQuery;
-    }
+    },
+    ...mapState(['voyado'])
   },
   watch: {
     searchQuery(val) {
@@ -138,19 +105,14 @@ export default {
     eventbus.$on('route-change', () => {
       this.onClose();
     });
+    if (!this.voyado.api) {
+      this.$store.dispatch('initVoyado');
+    }
   },
   beforeDestroy() {
     eventbus.$off('route-change');
   },
   methods: {
-    api() {
-      return esales({
-        market: this.market,
-        locale: this.locale,
-        clusterId: this.clusterId,
-        touchpoint: this.touchpoint
-      });
-    },
     visitSearchPage() {
       this.$router.push(this.searchPageUrl);
       this.$emit('voyadoSearchOnRouteChange');
@@ -188,9 +150,7 @@ export default {
     async onRemoveRecent() {
       this.isLoading = true;
       try {
-        await this.api().query.removeRecentSearches({
-          removeAll: true
-        });
+        await this.voyado.api.notify.removeRecentSearches('removeAll');
       } catch (error) {
         this.$nuxt.error({ statusCode: error.statusCode, message: error });
       } finally {

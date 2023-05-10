@@ -98,29 +98,27 @@ export default {
 
 ## Props
 
-| Name              | Type    | Default                                                      | Description                                                                      |
-| ----------------- | ------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| isVisible         | Boolean | false                                                        | Sets the voyado-search--visible class. Can be used to toggle search from outside |
-| currentClusterId  | String  | this.\$voyado.clusterId                                      | The cluserId sent to Voyado                                                      |
-| currentMarket     | String  | this.\$store.state.channel.currentMarket                     | The market sent to Voyado                                                        |
-| currentLocale     | String  | this.\$i18n.localeProperties.iso                             | The locale sent to Voyado                                                        |
-| currentTouchpoint | String  | 'mobile' or 'desktop' based on this.\$store.getters.viewport | The touchpoint sent to Voyado                                                    |
+| Name      | Type    | Default | Description                                                                      |
+| --------- | ------- | ------- | -------------------------------------------------------------------------------- |
+| isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
 
 ## Translations
 
 Available translations:
 
-| Key                                     | Value                                        |
-| --------------------------------------- | -------------------------------------------- |
-| VOYADO_SEARCH_FORM                      | `Search`                                     |
-| VOYADO_SEARCH_FORM_PLACEHOLDER          | `Search`                                     |
-| VOYADO_SEARCH_RESULTS_TITLE             | `Search results`                             |
-| VOYADO_SEARCH_RESULTS_NO_MATCH          | `Sorry, no matches found`                    |
-| VOYADO_SEARCH_PRODUCT_RESULTS_TITLE     | `Product <PIPE> Products`                    |
-| VOYADO_SEARCH_RESULTS_REMOVE_RECENT     | `Remove`                                     |
-| VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                            |
-| VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                           |
-| VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products` |
+| Key                                     | Value                                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| VOYADO_SEARCH_FORM                      | `Search`                                                                                                                             |
+| VOYADO_SEARCH_FORM_PLACEHOLDER          | `Search`                                                                                                                             |
+| VOYADO_SEARCH_RESULTS_TITLE             | `Search results`                                                                                                                     |
+| VOYADO_SEARCH_RESULTS_NO_MATCH          | `Sorry, no matches found`                                                                                                            |
+| VOYADO_SEARCH_PRODUCT_RESULTS_TITLE     | `Product <PIPE> Products`                                                                                                            |
+| VOYADO_SEARCH_RESULTS_REMOVE_RECENT     | `Remove`                                                                                                                             |
+| VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                                                                                                                    |
+| VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                                                                                                                   |
+| VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                         |
+| VOYADO_SEARCH_PAGE_TITLE                | `Search results for: {search}`                                                                                                       |
+| VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
 
 > NOTE: Replace `<PIPE>` with the "|" character
 
