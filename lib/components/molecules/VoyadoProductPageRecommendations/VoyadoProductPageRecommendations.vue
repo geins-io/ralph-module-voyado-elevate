@@ -7,7 +7,7 @@
         class="voyado-product-page-recommendations__list"
       >
         <h3 class="voyado-product-page-recommendations__title">
-          {{ $t(`VOYADO_RECOMMENDATIONS_TITLE_${list.id}`) }}
+          {{ $t(`VOYADO_RECOMMENDATIONS_TITLE_${list.id}${getRandomTitle()}`) }}
         </h3>
         <CaProductListSlider
           class="voyado-product-page-recommendations__slider"
@@ -32,6 +32,10 @@ export default {
     productKey: {
       type: [String, Number],
       required: true
+    },
+    randomTitles: {
+      type: Number,
+      default: 0
     }
   },
   data: () => ({
@@ -92,6 +96,11 @@ export default {
       } finally {
         this.isLoading = false;
       }
+    },
+    getRandomTitle() {
+      return this.randomTitles > 0
+        ? '_' + (Math.floor(Math.random() * this.randomTitles) + 1)
+        : '';
     }
   }
 };
