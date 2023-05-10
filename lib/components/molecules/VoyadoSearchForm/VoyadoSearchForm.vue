@@ -38,6 +38,7 @@
 </template>
 <script>
 import { debounce } from 'lodash';
+import { mapState } from 'vuex';
 
 export default {
   name: 'VoyadoSearchForm',
@@ -71,10 +72,6 @@ export default {
       type: Number,
       default: 500
     },
-    api: {
-      type: Function,
-      required: true
-    },
     isFocus: {
       type: Boolean,
       default: false
@@ -91,7 +88,8 @@ export default {
       set(newVal) {
         this.$emit('update:searchQuery', newVal);
       }
-    }
+    },
+    ...mapState(['voyado'])
   },
   watch: {
     localSearchQuery(newVal, oldVal) {
@@ -112,7 +110,7 @@ export default {
   methods: {
     async fetchResults() {
       try {
-        const results = await this.api().query.autocomplete({
+        const results = await this.voyado.api.query.autocomplete({
           q: this.searchQuery
         });
 

@@ -121,6 +121,7 @@ Available translations:
 | VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                            |
 | VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                           |
 | VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products` |
+| VOYADO_SEARCH_PAGE_TITLE                | `Search results for: {search}`               |
 
 > NOTE: Replace `<PIPE>` with the "|" character
 
