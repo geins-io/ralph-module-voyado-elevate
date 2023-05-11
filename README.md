@@ -98,6 +98,37 @@ export default {
 
 ## Props
 
+| Name          | Type   | Default | Description                                                             |
+| ------------- | ------ | ------- | ----------------------------------------------------------------------- |
+| configuration | Object | {}      | If used as widget, the widget configuration object                      |
+| productKey    | String | null    | If used on product page, the productKey matching your id in Voyado feed |
+| randomTitles  | Number | 0       | If used on product page, the number of random titles to show            |
+| limit         | Number | 8       | Number of products to fetch                                             |
+
+```vue
+<template>
+  <div>
+    <VoyadoRecommendations
+      :product-key="product.articleNumber"
+      :random-titles="3"
+      @voyadoProductTicket="onProductTicket"
+    />
+  </div>
+</template>
+
+<script>
+export default {
+  methods: {
+    onProductTicket(ticket) {
+      console.log('Ticket', ticket);
+    }
+  }
+};
+</script>
+```
+
+## Props
+
 | Name      | Type    | Default | Description                                                                      |
 | --------- | ------- | ------- | -------------------------------------------------------------------------------- |
 | isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
@@ -106,19 +137,19 @@ export default {
 
 Available translations:
 
-| Key                                     | Value                                                                                                                                |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| VOYADO_SEARCH_FORM                      | `Search`                                                                                                                             |
-| VOYADO_SEARCH_FORM_PLACEHOLDER          | `Search`                                                                                                                             |
-| VOYADO_SEARCH_RESULTS_TITLE             | `Search results`                                                                                                                     |
-| VOYADO_SEARCH_RESULTS_NO_MATCH          | `Sorry, no matches found`                                                                                                            |
-| VOYADO_SEARCH_PRODUCT_RESULTS_TITLE     | `Product <PIPE> Products`                                                                                                            |
-| VOYADO_SEARCH_RESULTS_REMOVE_RECENT     | `Remove`                                                                                                                             |
-| VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                                                                                                                    |
-| VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                                                                                                                   |
-| VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                         |
-| VOYADO_SEARCH_PAGE_TITLE                | `Search results for: {search}`                                                                                                       |
-| VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
+| Key                                     | Value                                                                                                                                              |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VOYADO_SEARCH_FORM                      | `Search`                                                                                                                                           |
+| VOYADO_SEARCH_FORM_PLACEHOLDER          | `Search`                                                                                                                                           |
+| VOYADO_SEARCH_RESULTS_TITLE             | `Search results`                                                                                                                                   |
+| VOYADO_SEARCH_RESULTS_NO_MATCH          | `Sorry, no matches found`                                                                                                                          |
+| VOYADO_SEARCH_PRODUCT_RESULTS_TITLE     | `Product <PIPE> Products`                                                                                                                          |
+| VOYADO_SEARCH_RESULTS_REMOVE_RECENT     | `Remove`                                                                                                                                           |
+| VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                                                                                                                                  |
+| VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                                                                                                                                 |
+| VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                                       |
+| VOYADO_SEARCH_PAGE_TITLE                | `Search results for: {search}`                                                                                                                     |
+| VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id or $algorithm (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
 
 > NOTE: Replace `<PIPE>` with the "|" character
 
