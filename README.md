@@ -9,6 +9,10 @@ We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/packag
 
 > A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
 
+## Requirements
+
+This package require Nuxt2 to be installed in your project. Also it requires @ralph/ralph-ui 19.2.0 or higher.
+
 ## Installation
 
 To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it from npm using the following command:
@@ -64,9 +68,9 @@ export default {
 };
 ```
 
-## Usage
+## Using components
 
-After installing the module, you can use its components in your Nuxt2 app by importing them in your .vue files:
+After installing the module, you can use its components in your Nuxt2 app like this:
 
 ```vue
 <template>
@@ -98,6 +102,34 @@ export default {
 
 ## Props
 
+| Name      | Type    | Default | Description                                                                      |
+| --------- | ------- | ------- | -------------------------------------------------------------------------------- |
+| isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
+
+For the
+
+```vue
+// pages/product/_alias.vue
+<template>
+  <div>
+    <VoyadoRecommendations
+      :product-key="product.articleNumber"
+      :random-titles="3"
+      @voyadoProductData="setVoyadoData"
+    />
+  </div>
+</template>
+
+<script>
+import { VoyadoProductPage } from '@geins/ralph-module-voyado-elevate';
+export default {
+  mixins: [VoyadoProductPage]
+};
+</script>
+```
+
+## Props
+
 | Name          | Type   | Default | Description                                                             |
 | ------------- | ------ | ------- | ----------------------------------------------------------------------- |
 | configuration | Object | {}      | If used as widget, the widget configuration object                      |
@@ -105,33 +137,9 @@ export default {
 | randomTitles  | Number | 0       | If used on product page, the number of random titles to show            |
 | limit         | Number | 8       | Number of products to fetch                                             |
 
-```vue
-<template>
-  <div>
-    <VoyadoRecommendations
-      :product-key="product.articleNumber"
-      :random-titles="3"
-      @voyadoProductTicket="onProductTicket"
-    />
-  </div>
-</template>
+## Notifications
 
-<script>
-export default {
-  methods: {
-    onProductTicket(ticket) {
-      console.log('Ticket', ticket);
-    }
-  }
-};
-</script>
-```
-
-## Props
-
-| Name      | Type    | Default | Description                                                                      |
-| --------- | ------- | ------- | -------------------------------------------------------------------------------- |
-| isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
+For the Voyado notifications to work properly, you will need to use the `voyadoProduct` object in your product page, passing it to CaToggleFavorite and making sure that this is the product object that gets sent to your addToCart function. This object will be available through the `VoyadoProductPage` mixin.
 
 ## Translations
 
