@@ -84,6 +84,16 @@ export default {
     },
     isSuggestions() {
       return this.mode === 'suggestions';
+    },
+    origin() {
+      switch (this.mode) {
+        case 'recent':
+          return 'RECENT_SEARCH';
+        case 'suggestions':
+          return 'PHRASE_SUGGEST';
+        default:
+          return 'ORGANIC';
+      }
     }
   },
   watch: {
@@ -100,6 +110,7 @@ export default {
       this.removed = true;
     },
     setQuery(q) {
+      this.$store.commit('setSearchOrigin', this.origin);
       this.$emit('voyadoSearchSetQuery', q);
     },
     formatHighlighted(text) {

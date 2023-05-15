@@ -91,10 +91,7 @@ export default {
             }
           );
 
-          this.$emit(
-            'voyadoProductTicket',
-            data.productGroup.products[0].ticket
-          );
+          this.$emit('voyadoProductData', data?.productGroup);
         } else {
           data = await this.voyado.api.query.landingPage(
             {

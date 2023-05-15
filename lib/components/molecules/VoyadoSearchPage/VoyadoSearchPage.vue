@@ -130,8 +130,11 @@ export default {
           limit: this.pageSize,
           skip: this.skip,
           presentCustom: 'ralph_data|ralph_data_skus',
-          sort: this.sort
+          sort: this.sort,
+          origin: this.voyado.searchOrigin
         });
+
+        this.$store.commit('setSearchOrigin');
 
         this.updatingFromURL = false;
 
