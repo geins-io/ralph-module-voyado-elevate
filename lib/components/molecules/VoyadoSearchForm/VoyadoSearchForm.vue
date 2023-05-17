@@ -111,7 +111,7 @@ export default {
     async fetchResults() {
       try {
         const results = await this.voyado.api.query.autocomplete({
-          q: this.searchQuery
+          q: encodeURI(this.searchQuery)
         });
 
         this.$emit('update:totalHits', results.totalHits);

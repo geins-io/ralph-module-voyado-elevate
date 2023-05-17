@@ -126,7 +126,7 @@ export default {
     ) {
       try {
         const data = await this.voyado.api.query.searchPage({
-          q: this.query,
+          q: encodeURI(this.query),
           limit: this.pageSize,
           skip: this.skip,
           presentCustom: 'ralph_data|ralph_data_skus',
