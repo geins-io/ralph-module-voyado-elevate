@@ -125,8 +125,12 @@ export default {
       isPrev = false
     ) {
       try {
+        const query = this.$voyado.encodeSearchString
+          ? encodeURIComponent(this.query)
+          : this.query;
+
         const data = await this.voyado.api.query.searchPage({
-          q: encodeURIComponent(this.query),
+          q: query,
           limit: this.pageSize,
           skip: this.skip,
           presentCustom: 'ralph_data|ralph_data_skus',

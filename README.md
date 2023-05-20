@@ -31,13 +31,16 @@ module.exports = {
   modules: [
     [
       '@geins/ralph-module-voyado-elevate',
-      // Configuration options for the Ralph Module for Voyado Elevate
+      // Configuration defaults for the module
       {
-        // Set to true to enable the module
+        // Set to true to enable debug mode
+        debug: false,
+        // Set to false to disable the module
         enabled: true,
-
-        // Your Voyado Elevate cluster ID
-        clusterId: 'yourClusterId'
+        // Your Voyado Elevate cluster ID, this is required
+        clusterId: '',
+        // Set to false to not encode the search string
+        encodeSearchString: true
       }
     ]
   ]
