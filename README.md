@@ -38,9 +38,7 @@ module.exports = {
         // Set to false to disable the module
         enabled: true,
         // Your Voyado Elevate cluster ID, this is required
-        clusterId: '',
-        // Set to false to not encode the search string
-        encodeSearchString: true
+        clusterId: ''
       }
     ]
   ]

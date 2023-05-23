@@ -110,12 +110,8 @@ export default {
   methods: {
     async fetchResults() {
       try {
-        const query = this.$voyado.encodeSearchString
-          ? encodeURIComponent(this.searchQuery)
-          : this.searchQuery;
-
         const results = await this.voyado.api.query.autocomplete({
-          q: query
+          q: this.searchQuery
         });
 
         this.$emit('update:totalHits', results.totalHits);
