@@ -38,7 +38,9 @@ module.exports = {
         // Set to false to disable the module
         enabled: true,
         // Your Voyado Elevate cluster ID, this is required
-        clusterId: ''
+        clusterId: '',
+        // Limit of products to fetch for the product page recommendations
+        pdpRecommendationLimit: 8
       }
     ]
   ]

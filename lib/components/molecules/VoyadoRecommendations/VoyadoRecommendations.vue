@@ -80,12 +80,14 @@ export default {
                 {
                   id: 'ALTERNATIVES',
                   algorithm: 'ALTERNATIVES',
-                  limit: 8
+                  limit: this.$voyado.pdpRecommendationLimit,
+                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
                 },
                 {
                   id: 'UPSELL',
                   algorithm: 'UPSELL',
-                  limit: 8
+                  limit: this.$voyado.pdpRecommendationLimit,
+                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
                 }
               ]
             }
