@@ -139,6 +139,10 @@ export default {
         this.updatingFromURL = false;
 
         const products = data?.primaryList?.productGroups;
+        console.log(
+          '🚀 ~ file: VoyadoSearchPage.vue:142 ~ data?.primaryList:',
+          data?.primaryList
+        );
         const newList = await this.$store.dispatch(
           'transformProducts',
           products
