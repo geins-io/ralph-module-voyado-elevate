@@ -1,7 +1,9 @@
 <template>
-  <div class="voyado-search-page">
+  <div class="voyado-list-page">
     <CaContainer>
-      <CaListTop type="search" :list-info="listInfo" />
+      <CaBreadcrumbs v-if="listInfo" :current="breadcrumbsCurrent" />
+      <CaSkeleton v-else class="ca-breadcrumbs" width="10%" />
+      <CaListTop :type="type" :list-info="listInfo" />
       <div class="ca-list-page__filters">
         <div class="ca-list-settings">
           <div class="ca-list-settings__active-products">
@@ -64,6 +66,7 @@
     <LazyVoyadoFilterPanel
       :external-sort-options="sortOptions"
       :current-sort="sort"
+      :facets="facets"
       @sortchange="sortChangeHandler"
     />
   </div>
@@ -72,17 +75,40 @@
 import { mapState } from 'vuex';
 // The voyado search page<br><br>
 export default {
-  name: 'VoyadoSearchPage',
+  name: 'VoyadoListPage',
   props: {
+    type: {
+      type: String,
+      default: 'list',
+      validator(value) {
+        return ['list', 'search'].includes(value);
+      }
+    },
     query: {
       type: String,
-      required: true
+      default() {
+        return this.$route.params.search;
+      }
+    },
+    pageReference: {
+      type: String,
+      default() {
+        return decodeURI(this.$route.path);
+      }
     },
     pageSize: {
       type: Number,
       default() {
         return this.$config.productListPageSize;
       }
+    },
+    listInfo: {
+      type: Object,
+      required: true
+    },
+    defaultSort: {
+      type: String,
+      default: 'RELEVANCE'
     }
   },
   data: () => ({
@@ -90,19 +116,19 @@ export default {
     isLoading: true,
     page: 1,
     totalCount: 0,
-    sort: 'RELEVANCE',
+    sort: '',
     sortOptions: [],
+    facets: [],
     updatingFromURL: true,
     currentMaxCount: 0,
     currentMinCount: 0
   }),
   computed: {
-    listInfo() {
-      return {
-        name: this.$t('VOYADO_SEARCH_PAGE_TITLE', {
-          search: this.query
-        })
-      };
+    isSearch() {
+      return this.type === 'search';
+    },
+    isList() {
+      return this.type === 'list';
     },
     skip() {
       return (this.page - 1) * this.pageSize;
@@ -113,29 +139,70 @@ export default {
     allProductsLoaded() {
       return this.currentMaxCount >= this.totalCount;
     },
+    breadcrumbsCurrent() {
+      const currentAlias = this.isList
+        ? this.pageReference.split('/').pop()
+        : this.query;
+      return this.listInfo
+        ? {
+            name: this.listInfo.name,
+            alias: currentAlias,
+            canonical: this.listInfo.canonicalUrl,
+            id: this.listInfo.id,
+            type: this.type
+          }
+        : {};
+    },
     ...mapState(['voyado'])
   },
   mounted() {
+    if (!this.voyado.api) {
+      this.$store.dispatch('initVoyado');
+    }
+    this.initList();
     this.readURLParams();
+    this.fetchListPage(true);
   },
   methods: {
-    async fetchSearchPage(
+    initList() {
+      this.sort = this.defaultSort;
+    },
+    async fetchListPage(
       setMinCount = false,
       resetList = false,
       isPrev = false
     ) {
       try {
-        const data = await this.voyado.api.query.searchPage({
-          q: this.query,
+        let data = null;
+        const apiQuery = {
           limit: this.pageSize,
           skip: this.skip,
           presentCustom: 'ralph_data|ralph_data_skus',
-          sort: this.sort,
-          origin: this.voyado.searchOrigin
-        });
+          sort: this.sort
+        };
 
-        this.$store.commit('setSearchOrigin');
+        if (this.isSearch) {
+          const query = {
+            ...apiQuery,
+            q: this.query,
+            origin: this.voyado.searchOrigin
+          };
 
+          data = await this.voyado.api.query.searchPage(query);
+          this.$store.commit('setSearchOrigin');
+        } else {
+          const query = {
+            ...apiQuery,
+            pageReference: this.pageReference
+          };
+
+          data = await this.voyado.api.query.landingPage(query, {
+            primaryList: {
+              include: true,
+              productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
+            }
+          });
+        }
         this.updatingFromURL = false;
 
         const products = data?.primaryList?.productGroups;
@@ -152,6 +219,7 @@ export default {
 
         this.totalCount = data?.primaryList?.totalHits;
         this.sortOptions = data?.primaryList?.sort.options;
+        this.facets = data?.primaryList?.facets;
 
         const count = this.skip + this.pageSize;
         this.currentMaxCount =
@@ -162,8 +230,8 @@ export default {
         }
 
         this.pushURLParams();
-      } catch (error) {
-        this.$nuxt.error({ statusCode: error.statusCode, message: error });
+      } catch (err) {
+        this.$nuxt.error({ statusCode: err.statusCode, message: err });
       } finally {
         this.isLoading = false;
         this.$store.dispatch('loading/end');
@@ -172,18 +240,18 @@ export default {
     loadMore() {
       this.isLoading = true;
       this.page++;
-      this.fetchSearchPage();
+      this.fetchListPage();
     },
     loadPrev() {
       this.isLoading = true;
       this.page--;
-      this.fetchSearchPage(true, false, true);
+      this.fetchListPage(true, false, true);
     },
     sortChangeHandler(sort) {
       if (!this.updatingFromURL) {
         this.sort = sort;
         this.page = 1;
-        this.fetchSearchPage(true, true);
+        this.fetchListPage(true, true);
       }
     },
     pushURLParams() {
@@ -191,7 +259,7 @@ export default {
         sort: this.sort,
         page: this.page
       };
-      if (params.sort === 'RELEVANCE') {
+      if (params.sort === this.defaultSort) {
         delete params.sort;
       }
       if (params.page === 1) {
@@ -213,8 +281,6 @@ export default {
       if (params.page) {
         this.page = Number(params.page);
       }
-
-      this.fetchSearchPage(true);
     }
   }
 };

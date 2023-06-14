@@ -77,6 +77,14 @@ export default {
     currentSort: {
       type: String,
       required: true
+    },
+    facets: {
+      type: Array,
+      required: true
+    },
+    selection: {
+      type: Object,
+      default: () => ({})
     }
   },
   data: () => ({

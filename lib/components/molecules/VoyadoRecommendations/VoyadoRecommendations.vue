@@ -1,7 +1,7 @@
 <template>
   <div class="voyado-recommendations">
     <div
-      v-for="list in recommendationLists"
+      v-for="list in recommendationListsWithProducts"
       :key="list.id"
       class="voyado-recommendations__list"
     >
@@ -55,6 +55,11 @@ export default {
     algorithm() {
       return this.configuration?.voyadoId?.split('|')[1].trim();
     },
+    recommendationListsWithProducts() {
+      return this.recommendationLists.filter(
+        list => list.productGroups.length > 0
+      );
+    },
     ...mapState(['voyado'])
   },
   mounted() {
@@ -105,7 +110,8 @@ export default {
                 {
                   id: this.id,
                   algorithm: this.algorithm,
-                  limit: this.limit
+                  limit: this.limit,
+                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
                 }
               ]
             }
