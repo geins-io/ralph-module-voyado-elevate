@@ -6,10 +6,28 @@
     class="ca-filter-panel"
   >
     <LazyCaAccordionItem
+      v-for="(facet, index) in facetsWithValues"
+      :key="index"
       class="ca-filter-panel__toggle"
-      :open-on-init="contentpanel.frame === 'sort'"
       :styled="false"
     >
+      <template #toggle-text>
+        <div class="ca-filter-panel__toggle-content">
+          <span class="ca-filter-panel__toggle-text">
+            {{ facet.label }}
+          </span>
+          <CaNotificationBadge
+            :number="facet.selectedCount"
+            :positioned="false"
+          />
+        </div>
+      </template>
+      <VoyadoFilterMulti
+        :values="facet.values"
+        @selection="setSelection(facet.id, $event)"
+      />
+    </LazyCaAccordionItem>
+    <LazyCaAccordionItem class="ca-filter-panel__toggle" :styled="false">
       <template #toggle-text>
         <span class="ca-filter-panel__toggle-text">
           {{ $t('SORT_TITLE') }}
@@ -81,10 +99,6 @@ export default {
     facets: {
       type: Array,
       required: true
-    },
-    selection: {
-      type: Object,
-      default: () => ({})
     }
   },
   data: () => ({
@@ -99,6 +113,9 @@ export default {
         label: sort.label,
         value: sort.id
       }));
+    },
+    facetsWithValues() {
+      return this.facets.filter(facet => facet.values?.length > 0);
     },
     ...mapState(['contentpanel'])
   },
@@ -117,27 +134,12 @@ export default {
     closeContentPanel() {
       eventbus.$emit('close-content-panel');
     },
-    updateSelection(selection, type, group = null) {
-      if (group) {
-        const obj = this.currentSelection.parameters;
-        if (obj[group]) {
-          obj[group] = selection;
-        } else {
-          this.$set(obj, group, selection);
-        }
-        this.$set(this.currentSelection, 'parameters', obj);
-      } else {
-        this.currentSelection[type] = selection;
-      }
-      this.$emit('selectionchange', this.currentSelection);
-    },
-    getParameterSelection(group) {
-      const selection = this.selection.parameters[group];
-      return selection || [];
-    },
     updateSort(sort) {
       this.$emit('sortchange', sort);
       this.closeContentPanel();
+    },
+    setSelection(facetId, values) {
+      this.$emit('selectionchange', { facetId, values });
     }
   }
 };

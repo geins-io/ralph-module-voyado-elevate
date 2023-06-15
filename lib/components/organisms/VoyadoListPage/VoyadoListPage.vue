@@ -48,7 +48,7 @@
 
       <CaProductList
         :page-size="pageSize"
-        :products="list"
+        :products="productList"
         :products-fetched="!isLoading"
       />
 
@@ -68,6 +68,7 @@
       :current-sort="sort"
       :facets="facets"
       @sortchange="sortChangeHandler"
+      @selectionchange="selectionChangeHandler"
     />
   </div>
 </template>
@@ -112,7 +113,7 @@ export default {
     }
   },
   data: () => ({
-    list: [],
+    productList: [],
     isLoading: true,
     page: 1,
     totalCount: 0,
@@ -121,7 +122,8 @@ export default {
     facets: [],
     updatingFromURL: true,
     currentMaxCount: 0,
-    currentMinCount: 0
+    currentMinCount: 0,
+    facetsSelection: {}
   }),
   computed: {
     isSearch() {
@@ -153,19 +155,40 @@ export default {
           }
         : {};
     },
-    ...mapState(['voyado'])
+    facetsQueryString() {
+      let string = '';
+      Object.keys(this.facetsSelection).forEach(key => {
+        if (this.facetsSelection[key].length > 0) {
+          string += `&f.${key}=${this.facetsSelection[key].join('|')}`;
+        }
+      });
+
+      return string.substring(1);
+    },
+    facetsQueryObject() {
+      const queryObject = {};
+      Object.keys(this.facetsSelection).forEach(key => {
+        if (this.facetsSelection[key].length > 0) {
+          queryObject[`f.${key}`] = this.facetsSelection[key].join('|');
+        }
+      });
+
+      return queryObject;
+    },
+    ...mapState(['voyado', 'list'])
   },
   mounted() {
     if (!this.voyado.api) {
       this.$store.dispatch('initVoyado');
     }
     this.initList();
-    this.readURLParams();
-    this.fetchListPage(true);
   },
   methods: {
     initList() {
       this.sort = this.defaultSort;
+      this.page = this.list.relocatePage || 1;
+      this.readURLParams();
+      this.fetchListPage(true);
     },
     async fetchListPage(
       setMinCount = false,
@@ -178,7 +201,8 @@ export default {
           limit: this.pageSize,
           skip: this.skip,
           presentCustom: 'ralph_data|ralph_data_skus',
-          sort: this.sort
+          sort: this.sort,
+          ...this.facetsQueryObject
         };
 
         if (this.isSearch) {
@@ -212,9 +236,11 @@ export default {
         );
 
         if (isPrev) {
-          this.list = [...newList, ...this.list];
+          this.productList = [...newList, ...this.productList];
         } else {
-          this.list = resetList ? newList : [...this.list, ...newList];
+          this.productList = resetList
+            ? newList
+            : [...this.productList, ...newList];
         }
 
         this.totalCount = data?.primaryList?.totalHits;
@@ -254,16 +280,28 @@ export default {
         this.fetchListPage(true, true);
       }
     },
+    selectionChangeHandler(data) {
+      if (!this.updatingFromURL) {
+        const values = data.values.filter(i => i.selected).map(i => i.id);
+        this.$set(this.facetsSelection, data.facetId, values);
+        this.page = 1;
+        this.fetchListPage(true, true);
+      }
+    },
     pushURLParams() {
       const params = {
         sort: this.sort,
-        page: this.page
+        page: this.page,
+        facets: this.facetsQueryString
       };
       if (params.sort === this.defaultSort) {
         delete params.sort;
       }
       if (params.page === 1) {
         delete params.page;
+      }
+      if (params.facets === '') {
+        delete params.facets;
       }
 
       this.$router
@@ -280,6 +318,15 @@ export default {
       }
       if (params.page) {
         this.page = Number(params.page);
+      }
+      if (params.facets) {
+        const facets = decodeURI(params.facets).split('&');
+        facets.forEach(facet => {
+          const [key, value] = facet.split('=');
+          const facetId = key.split('.')[1];
+          const values = value.split('|');
+          this.$set(this.facetsSelection, facetId, values);
+        });
       }
     }
   }
