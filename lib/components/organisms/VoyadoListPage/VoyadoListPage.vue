@@ -67,6 +67,7 @@
       :external-sort-options="sortOptions"
       :current-sort="sort"
       :facets="facets"
+      @reset="resetHandler"
       @sortchange="sortChangeHandler"
       @selectionchange="selectionChangeHandler"
     />
@@ -116,6 +117,7 @@ export default {
     productList: [],
     isLoading: true,
     page: 1,
+    userSkip: 0,
     totalCount: 0,
     sort: '',
     sortOptions: [],
@@ -123,7 +125,8 @@ export default {
     updatingFromURL: true,
     currentMaxCount: 0,
     currentMinCount: 0,
-    facetsSelection: {}
+    facetsSelection: {},
+    scrollHeight: 0
   }),
   computed: {
     isSearch() {
@@ -133,6 +136,9 @@ export default {
       return this.type === 'list';
     },
     skip() {
+      if (this.userSkip) {
+        return this.userSkip;
+      }
       return (this.page - 1) * this.pageSize;
     },
     showing() {
@@ -186,8 +192,18 @@ export default {
   methods: {
     initList() {
       this.sort = this.defaultSort;
-      this.page = this.list.relocatePage || 1;
       this.readURLParams();
+      console.log(
+        '🚀 ~ file: VoyadoListPage.vue:206 ~ initList ~ this.$store.getters[list/relocateProduct]:',
+        this.$store.getters['list/relocateProduct']
+      );
+      if (this.$store.getters['list/relocateProduct']) {
+        console.log(
+          '🚀 ~ file: VoyadoListPage.vue:199 ~ initList ~ this.list.relocatePage:',
+          this.list.relocatePage
+        );
+        this.page = this.list.relocatePage;
+      }
       this.fetchListPage(true);
     },
     async fetchListPage(
@@ -195,11 +211,12 @@ export default {
       resetList = false,
       isPrev = false
     ) {
+      const skip = this.userSkip || this.skip;
       try {
         let data = null;
         const apiQuery = {
           limit: this.pageSize,
-          skip: this.skip,
+          skip,
           presentCustom: 'ralph_data|ralph_data_skus',
           sort: this.sort,
           ...this.facetsQueryObject
@@ -237,6 +254,11 @@ export default {
 
         if (isPrev) {
           this.productList = [...newList, ...this.productList];
+          this.$nextTick(() => {
+            const scrollAmount = this.getScrollHeight() - this.scrollHeight;
+            window.scrollBy(0, scrollAmount);
+            this.scrollHeight = 0;
+          });
         } else {
           this.productList = resetList
             ? newList
@@ -247,12 +269,19 @@ export default {
         this.sortOptions = data?.primaryList?.sort.options;
         this.facets = data?.primaryList?.facets;
 
-        const count = this.skip + this.pageSize;
+        if (setMinCount) {
+          this.currentMinCount = skip + 1;
+        }
+
+        const count = this.currentMinCount - 1 + this.productList.length;
+
         this.currentMaxCount =
           count >= this.totalCount ? this.totalCount : count;
 
-        if (setMinCount) {
-          this.currentMinCount = this.skip + 1;
+        if (this.productList.length === this.pageSize) {
+          this.$nextTick(() => {
+            this.relocateProduct();
+          });
         }
 
         this.pushURLParams();
@@ -265,12 +294,15 @@ export default {
     },
     loadMore() {
       this.isLoading = true;
-      this.page++;
+      this.page = this.currentMaxCount / this.pageSize + 1;
+      this.userSkip = this.currentMaxCount;
       this.fetchListPage();
     },
     loadPrev() {
       this.isLoading = true;
-      this.page--;
+      this.scrollHeight = this.getScrollHeight();
+      this.page = (this.currentMinCount - 1) / this.pageSize;
+      this.userSkip = this.currentMinCount - 1 - this.pageSize;
       this.fetchListPage(true, false, true);
     },
     sortChangeHandler(sort) {
@@ -287,6 +319,11 @@ export default {
         this.page = 1;
         this.fetchListPage(true, true);
       }
+    },
+    resetHandler() {
+      this.facetsSelection = {};
+      this.page = 1;
+      this.fetchListPage(true, true);
     },
     pushURLParams() {
       const params = {
@@ -328,6 +365,39 @@ export default {
           this.$set(this.facetsSelection, facetId, values);
         });
       }
+    },
+    // @vuese
+    // Get the current scroll height of the page, used to keep scroll in the right position while loading previous products
+    getScrollHeight() {
+      return Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight,
+        document.body.clientHeight,
+        document.documentElement.clientHeight
+      );
+    },
+    relocateProduct() {
+      if (!this.$store.getters['list/relocateProduct']) {
+        return;
+      }
+      const product = document.querySelector(
+        '[data-alias="' + this.list.relocateAlias + '"]'
+      );
+      console.log(
+        '🚀 ~ file: VoyadoListPage.vue:386 ~ relocateProduct ~ product:',
+        product
+      );
+      if (product !== null) {
+        this.$nextTick(() => {
+          window.scroll(0, product.offsetTop);
+          product.focus();
+          this.$store.dispatch('list/resetTriggerRelocate');
+        });
+      }
+      this.$store.commit('list/setBackNavigated', false);
+      this.$store.commit('list/setRelocatePage', 1);
     }
   }
 };

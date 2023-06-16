@@ -74,7 +74,7 @@ export default {
         if (this.productKey) {
           data = await this.voyado.api.query.productPage(
             {
-              productKey: this.productKey,
+              productKey: this.productKey.trim(),
               presentCustom: 'ralph_data|ralph_data_skus'
             },
             {

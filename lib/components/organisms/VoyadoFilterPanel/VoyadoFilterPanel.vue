@@ -59,7 +59,7 @@
           <CaButton
             class="ca-filter-panel__button-reset"
             color="secondary"
-            :disabled="true"
+            :disabled="!hasSelection"
             :size="buttonSize"
             type="full-width"
             @clicked="resetFilters"
@@ -101,9 +101,7 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    currentSelection: {}
-  }),
+  data: () => ({}),
   computed: {
     buttonSize() {
       return this.$store.getters.viewport === 'phone' ? 's' : 'm';
@@ -117,18 +115,16 @@ export default {
     facetsWithValues() {
       return this.facets.filter(facet => facet.values?.length > 0);
     },
+    hasSelection() {
+      return this.facets.some(facet => facet.selectedCount > 0);
+    },
     ...mapState(['contentpanel'])
   },
-  watch: {
-    selection(newVal) {
-      this.currentSelection = newVal;
-    }
-  },
-  mounted() {
-    this.currentSelection = this.selection;
-  },
+  watch: {},
+  mounted() {},
   methods: {
     resetFilters() {
+      this.closeContentPanel();
       this.$emit('reset');
     },
     closeContentPanel() {
