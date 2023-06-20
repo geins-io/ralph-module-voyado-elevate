@@ -42,6 +42,10 @@ export default {
     limit: {
       type: Number,
       default: 8
+    },
+    productRules: {
+      type: String,
+      default: ''
     }
   },
   data: () => ({
@@ -86,13 +90,13 @@ export default {
                   id: 'ALTERNATIVES',
                   algorithm: 'ALTERNATIVES',
                   limit: this.$voyado.pdpRecommendationLimit,
-                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
+                  productRules: this.productRules
                 },
                 {
                   id: 'UPSELL',
                   algorithm: 'UPSELL',
                   limit: this.$voyado.pdpRecommendationLimit,
-                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
+                  productRules: this.productRules
                 }
               ]
             }
@@ -110,8 +114,7 @@ export default {
                 {
                   id: this.id,
                   algorithm: this.algorithm,
-                  limit: this.limit,
-                  productRules: 'rule excl custom.price_type { "SALE_PRICE" }'
+                  limit: this.limit
                 }
               ]
             }

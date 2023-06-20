@@ -159,7 +159,6 @@ Available translations:
 | VOYADO_SEARCH_RECENT_SEARCHES_TITLE     | `Recent searches`                                                                                                                                  |
 | VOYADO_SEARCH_RESULTS_SUGGESTIONS_TITLE | `Popular searches`                                                                                                                                 |
 | VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                                       |
-| VOYADO_SEARCH_PAGE_TITLE                | `Search results for: {search}`                                                                                                                     |
 | VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id or $algorithm (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
 
 > NOTE: Replace `<PIPE>` with the "|" character
