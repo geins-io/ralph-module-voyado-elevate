@@ -47,6 +47,7 @@
       />
 
       <CaProductList
+        :skip="currentMinCount - 1"
         :page-size="pageSize"
         :products="productList"
         :products-fetched="!isLoading"
@@ -193,17 +194,11 @@ export default {
     initList() {
       this.sort = this.defaultSort;
       this.readURLParams();
-      console.log(
-        '🚀 ~ file: VoyadoListPage.vue:206 ~ initList ~ this.$store.getters[list/relocateProduct]:',
-        this.$store.getters['list/relocateProduct']
-      );
+
       if (this.$store.getters['list/relocateProduct']) {
-        console.log(
-          '🚀 ~ file: VoyadoListPage.vue:199 ~ initList ~ this.list.relocatePage:',
-          this.list.relocatePage
-        );
         this.page = this.list.relocatePage;
       }
+
       this.fetchListPage(true);
     },
     async fetchListPage(
@@ -267,6 +262,7 @@ export default {
 
         this.totalCount = data?.primaryList?.totalHits;
         this.sortOptions = data?.primaryList?.sort.options;
+        this.sort = data?.primaryList?.sort.selected;
         this.facets = data?.primaryList?.facets;
 
         if (setMinCount) {
@@ -384,10 +380,6 @@ export default {
       }
       const product = document.querySelector(
         '[data-alias="' + this.list.relocateAlias + '"]'
-      );
-      console.log(
-        '🚀 ~ file: VoyadoListPage.vue:386 ~ relocateProduct ~ product:',
-        product
       );
       if (product !== null) {
         this.$nextTick(() => {

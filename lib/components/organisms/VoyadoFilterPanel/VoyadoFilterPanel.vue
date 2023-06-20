@@ -113,6 +113,12 @@ export default {
       }));
     },
     facetsWithValues() {
+      this.facets.map(facet => {
+        if (facet.type === 'SIZE') {
+          facet.values = facet.sizeTypes[0].formats.flatMap(f => f.values);
+        }
+        return facet;
+      });
       return this.facets.filter(facet => facet.values?.length > 0);
     },
     hasSelection() {
