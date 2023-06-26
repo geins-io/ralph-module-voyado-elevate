@@ -103,13 +103,11 @@ export default {
 </script>
 ```
 
-## Props
+# Props
 
 | Name      | Type    | Default | Description                                                                      |
 | --------- | ------- | ------- | -------------------------------------------------------------------------------- |
 | isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
-
-For the
 
 ```vue
 // pages/product/_alias.vue
@@ -131,7 +129,7 @@ export default {
 </script>
 ```
 
-## Props
+# Props
 
 | Name          | Type   | Default | Description                                                             |
 | ------------- | ------ | ------- | ----------------------------------------------------------------------- |
@@ -139,6 +137,20 @@ export default {
 | productKey    | String | null    | If used on product page, the productKey matching your id in Voyado feed |
 | randomTitles  | Number | 0       | If used on product page, the number of random titles to show            |
 | limit         | Number | 8       | Number of products to fetch                                             |
+
+## Using mixins
+
+There are three available mixins, VoyadoProductPage, VoyadoListPage and VoyadoProductCard. If you want to use Voyado for your list pages, you have to add the VoyadoListPage mixin to your list page component instead of the mixin from Ralph (MixListPage). Also, you will need to use the VoyadoProductCard mixin in the product card.
+
+```vue
+// components/organisms/CaProductCard/CaProductCard.vue
+<script>
+import { VoyadoProductCard } from '@geins/ralph-module-voyado-elevate';
+export default {
+  mixins: [VoyadoProductCard]
+};
+</script>
+```
 
 ## Notifications
 

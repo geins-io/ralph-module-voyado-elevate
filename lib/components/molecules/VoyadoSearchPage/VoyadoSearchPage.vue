@@ -129,7 +129,8 @@ export default {
           q: this.query,
           limit: this.pageSize,
           skip: this.skip,
-          presentCustom: 'ralph_data|ralph_data_skus',
+          presentCustom:
+            'ralph_data|ralph_data_skus|ralph_data_variant_dimensions',
           sort: this.sort,
           origin: this.voyado.searchOrigin
         });
