@@ -6,6 +6,36 @@
     class="ca-filter-panel"
   >
     <LazyCaAccordionItem
+      v-if="showSortAtTop"
+      class="ca-filter-panel__toggle"
+      :styled="false"
+    >
+      <template #toggle-text>
+        <span class="ca-filter-panel__toggle-text">
+          {{ $t('SORT_TITLE') }}
+        </span>
+      </template>
+      <ul class="ca-filter-panel__sort">
+        <li
+          v-for="(sort, index) in sortOptions"
+          :key="index"
+          class="ca-filter-panel__sort-item"
+        >
+          <button
+            type="button"
+            class="ca-filter-panel__sort-button"
+            :class="{
+              'ca-filter-panel__sort-button--current':
+                sort.value === currentSort
+            }"
+            @click="updateSort(sort.value)"
+          >
+            {{ sort.label }}
+          </button>
+        </li>
+      </ul>
+    </LazyCaAccordionItem>
+    <LazyCaAccordionItem
       v-for="(facet, index) in facetsWithValues"
       :key="index"
       class="ca-filter-panel__toggle"
@@ -27,7 +57,11 @@
         @selection="setSelection(facet.id, $event)"
       />
     </LazyCaAccordionItem>
-    <LazyCaAccordionItem class="ca-filter-panel__toggle" :styled="false">
+    <LazyCaAccordionItem
+      v-if="!showSortAtTop"
+      class="ca-filter-panel__toggle"
+      :styled="false"
+    >
       <template #toggle-text>
         <span class="ca-filter-panel__toggle-text">
           {{ $t('SORT_TITLE') }}
@@ -99,6 +133,10 @@ export default {
     facets: {
       type: Array,
       required: true
+    },
+    showSortAtTop: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({}),
