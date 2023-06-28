@@ -79,7 +79,8 @@ export default {
           data = await this.voyado.api.query.productPage(
             {
               productKey: this.productKey.trim(),
-              presentCustom: 'ralph_data|ralph_data_skus'
+              presentCustom:
+                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions'
             },
             {
               productGroup: {
@@ -107,7 +108,8 @@ export default {
           data = await this.voyado.api.query.landingPage(
             {
               pageReference: '/',
-              presentCustom: 'ralph_data|ralph_data_skus'
+              presentCustom:
+                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions'
             },
             {
               recommendationLists: [

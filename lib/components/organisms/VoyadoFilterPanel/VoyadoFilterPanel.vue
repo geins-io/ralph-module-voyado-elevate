@@ -6,8 +6,60 @@
     class="ca-filter-panel"
   >
     <LazyCaAccordionItem
+      v-if="showSortAtTop"
       class="ca-filter-panel__toggle"
-      :open-on-init="contentpanel.frame === 'sort'"
+      :styled="false"
+    >
+      <template #toggle-text>
+        <span class="ca-filter-panel__toggle-text">
+          {{ $t('SORT_TITLE') }}
+        </span>
+      </template>
+      <ul class="ca-filter-panel__sort">
+        <li
+          v-for="(sort, index) in sortOptions"
+          :key="index"
+          class="ca-filter-panel__sort-item"
+        >
+          <button
+            type="button"
+            class="ca-filter-panel__sort-button"
+            :class="{
+              'ca-filter-panel__sort-button--current':
+                sort.value === currentSort
+            }"
+            @click="updateSort(sort.value)"
+          >
+            {{ sort.label }}
+          </button>
+        </li>
+      </ul>
+    </LazyCaAccordionItem>
+    <LazyCaAccordionItem
+      v-for="(facet, index) in facetsWithValues"
+      :key="index"
+      class="ca-filter-panel__toggle"
+      :styled="false"
+    >
+      <template #toggle-text>
+        <div class="ca-filter-panel__toggle-content">
+          <span class="ca-filter-panel__toggle-text">
+            {{ facet.label }}
+          </span>
+          <CaNotificationBadge
+            :number="facet.selectedCount"
+            :positioned="false"
+          />
+        </div>
+      </template>
+      <VoyadoFilterMulti
+        :values="facet.values"
+        @selection="setSelection(facet.id, $event)"
+      />
+    </LazyCaAccordionItem>
+    <LazyCaAccordionItem
+      v-if="!showSortAtTop"
+      class="ca-filter-panel__toggle"
       :styled="false"
     >
       <template #toggle-text>
@@ -41,7 +93,7 @@
           <CaButton
             class="ca-filter-panel__button-reset"
             color="secondary"
-            :disabled="true"
+            :disabled="!hasSelection"
             :size="buttonSize"
             type="full-width"
             @clicked="resetFilters"
@@ -77,11 +129,17 @@ export default {
     currentSort: {
       type: String,
       required: true
+    },
+    facets: {
+      type: Array,
+      required: true
+    },
+    showSortAtTop: {
+      type: Boolean,
+      default: false
     }
   },
-  data: () => ({
-    currentSelection: {}
-  }),
+  data: () => ({}),
   computed: {
     buttonSize() {
       return this.$store.getters.viewport === 'phone' ? 's' : 'm';
@@ -92,44 +150,36 @@ export default {
         value: sort.id
       }));
     },
+    facetsWithValues() {
+      this.facets.map(facet => {
+        if (facet.type === 'SIZE') {
+          facet.values = facet.sizeTypes[0].formats.flatMap(f => f.values);
+        }
+        return facet;
+      });
+      return this.facets.filter(facet => facet.values?.length > 0);
+    },
+    hasSelection() {
+      return this.facets.some(facet => facet.selectedCount > 0);
+    },
     ...mapState(['contentpanel'])
   },
-  watch: {
-    selection(newVal) {
-      this.currentSelection = newVal;
-    }
-  },
-  mounted() {
-    this.currentSelection = this.selection;
-  },
+  watch: {},
+  mounted() {},
   methods: {
     resetFilters() {
+      this.closeContentPanel();
       this.$emit('reset');
     },
     closeContentPanel() {
       eventbus.$emit('close-content-panel');
     },
-    updateSelection(selection, type, group = null) {
-      if (group) {
-        const obj = this.currentSelection.parameters;
-        if (obj[group]) {
-          obj[group] = selection;
-        } else {
-          this.$set(obj, group, selection);
-        }
-        this.$set(this.currentSelection, 'parameters', obj);
-      } else {
-        this.currentSelection[type] = selection;
-      }
-      this.$emit('selectionchange', this.currentSelection);
-    },
-    getParameterSelection(group) {
-      const selection = this.selection.parameters[group];
-      return selection || [];
-    },
     updateSort(sort) {
       this.$emit('sortchange', sort);
       this.closeContentPanel();
+    },
+    setSelection(facetId, values) {
+      this.$emit('selectionchange', { facetId, values });
     }
   }
 };
