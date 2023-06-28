@@ -11,7 +11,7 @@ We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/packag
 
 ## Requirements
 
-This package require Nuxt2 to be installed in your project. Also it requires @ralph/ralph-ui 19.2.0 or higher.
+This package require Nuxt2 to be installed in your project. Also it requires @ralph/ralph-ui 20.0.0 or higher.
 
 ## Installation
 
@@ -71,9 +71,11 @@ export default {
 };
 ```
 
-## Using components
+## Components
 
-After installing the module, you can use its components in your Nuxt2 app like this:
+After installing the module, you can use all its components in your Nuxt2 app straight away.
+
+# VoyadoSearch
 
 ```vue
 <template>
@@ -103,11 +105,13 @@ export default {
 </script>
 ```
 
-# Props
+**Props**
 
 | Name      | Type    | Default | Description                                                                      |
 | --------- | ------- | ------- | -------------------------------------------------------------------------------- |
 | isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
+
+# VoyadoRecommendations
 
 ```vue
 // pages/product/_alias.vue
@@ -129,7 +133,7 @@ export default {
 </script>
 ```
 
-# Props
+**Props**
 
 | Name          | Type   | Default | Description                                                             |
 | ------------- | ------ | ------- | ----------------------------------------------------------------------- |
@@ -137,10 +141,49 @@ export default {
 | productKey    | String | null    | If used on product page, the productKey matching your id in Voyado feed |
 | randomTitles  | Number | 0       | If used on product page, the number of random titles to show            |
 | limit         | Number | 8       | Number of products to fetch                                             |
+| productRules  | String | ''      | productRules to send to Voyado for product page recommendations         |
 
-## Using mixins
+# VoyadoFilterPanel
+
+This must be used in the same list component file where the VoyadoListPage mixin is used.
+
+```vue
+// components/organisms/CaListPageVoyado/CaListPageVoyado.vue
+<template>
+  <VoyadoFilterPanel
+    :external-sort-options="sortOptions"
+    :current-sort="sort"
+    :facets="facets"
+    @reset="resetHandler"
+    @sortchange="sortChangeHandler"
+    @selectionchange="selectionChangeHandler"
+  />
+</template>
+<script>
+import { VoyadoListPage } from '@geins/ralph-module-voyado-elevate';
+export default {
+  name: 'CaListPageVoyado',
+  mixins: [VoyadoListPage]
+};
+</script>
+```
+
+**Props**
+
+| Name                | Type    | Default    | Description                           |
+| ------------------- | ------- | ---------- | ------------------------------------- |
+| externalSortOptions | Array   | `required` | The sort options from the Voyado api  |
+| currentSort         | String  | `required` | Current sort                          |
+| facets              | Array   | `required` | The facets from the Voyado api        |
+| showSortAtTop       | Boolean | false      | Set to true to show sort above facets |
+
+## Mixins
 
 There are three available mixins, VoyadoProductPage, VoyadoListPage and VoyadoProductCard. If you want to use Voyado for your list pages, you have to add the VoyadoListPage mixin to your list page component instead of the mixin from Ralph (MixListPage). Also, you will need to use the VoyadoProductCard mixin in the product card.
+
+# VoyadoProductCard
+
+Since Voyado is delivering it's product data in groups of variants for each product, this mixin comes prepared to set the displayed product to the forst product of the list.
 
 ```vue
 // components/organisms/CaProductCard/CaProductCard.vue
@@ -151,6 +194,45 @@ export default {
 };
 </script>
 ```
+
+# VoyadoProductPage
+
+This mixin provides a computed property `voyadoProduct` that you can use to pass to the `CaToggleFavorite` component and to your `addToCart` function. It also provides a method `setVoyadoData` that you can use to set the product data from Voyado to the `voyadoProduct` property.
+
+```vue
+// pages/product/_alias.vue
+<script>
+import { VoyadoProductPage } from '@geins/ralph-module-voyado-elevate';
+export default {
+  mixins: [VoyadoProductPage]
+};
+</script>
+```
+
+# VoyadoListPage
+
+Should be used instead of MixListPage in your list page component. Either make a new one for Voyado lists or use it in CaListPage. It has basically the same set of functionality. Use pageReferance instead of currentPath and use VoyadoFilterPanel instead of CaFilterPanel.
+
+```vue
+// components/organisms/CaListPageVoyado/CaListPageVoyado.vue
+<script>
+import { VoyadoListPage } from '@geins/ralph-module-voyado-elevate';
+export default {
+  mixins: [VoyadoListPage]
+};
+</script>
+```
+
+**Props**
+
+| Name          | Type   | Default                      | Description                                                                 |
+| ------------- | ------ | ---------------------------- | --------------------------------------------------------------------------- |
+| type          | String | 'list'                       | 'list' or 'search'                                                          |
+| query         | String | \$route.params.search        | Current search query                                                        |
+| pageReference | String | decodeURI(\$route.path)      | The same as currentPath in Ralph, used to fetch landingPage from Voyado api |
+| pageSize      | Number | \$config.productListPageSize | Number of products on each page                                             |
+| listInfo      | Object | `required`                   | The listInfo object from Ralph api or static list info                      |
+| defaultSort   | String | 'RELEVANCE'                  | The default sort                                                            |
 
 ## Notifications
 
@@ -209,10 +291,6 @@ We enforce [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/
 ## License
 
 MIT
-
-## Note
-
-This module requires Nuxt2 to work properly.
 
 [npm]: https://img.shields.io/npm/v/@geins/ralph-module-voyado-elevate
 [npm-url]: https://www.npmjs.com/package/@geins/ralph-module-voyado-elevate
