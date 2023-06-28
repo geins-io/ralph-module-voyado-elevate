@@ -75,7 +75,7 @@ export default {
 
 After installing the module, you can use all its components in your Nuxt2 app straight away.
 
-# VoyadoSearch
+### VoyadoSearch
 
 ```vue
 <template>
@@ -111,7 +111,7 @@ export default {
 | --------- | ------- | ------- | -------------------------------------------------------------------------------- |
 | isVisible | Boolean | false   | Sets the voyado-search--visible class. Can be used to toggle search from outside |
 
-# VoyadoRecommendations
+### VoyadoRecommendations
 
 ```vue
 // pages/product/_alias.vue
@@ -143,7 +143,7 @@ export default {
 | limit         | Number | 8       | Number of products to fetch                                             |
 | productRules  | String | ''      | productRules to send to Voyado for product page recommendations         |
 
-# VoyadoFilterPanel
+### VoyadoFilterPanel
 
 This must be used in the same list component file where the VoyadoListPage mixin is used.
 
@@ -181,7 +181,7 @@ export default {
 
 There are three available mixins, VoyadoProductPage, VoyadoListPage and VoyadoProductCard. If you want to use Voyado for your list pages, you have to add the VoyadoListPage mixin to your list page component instead of the mixin from Ralph (MixListPage). Also, you will need to use the VoyadoProductCard mixin in the product card.
 
-# VoyadoProductCard
+### VoyadoProductCard
 
 Since Voyado is delivering it's product data in groups of variants for each product, this mixin comes prepared to set the displayed product to the forst product of the list.
 
@@ -195,7 +195,7 @@ export default {
 </script>
 ```
 
-# VoyadoProductPage
+### VoyadoProductPage
 
 This mixin provides a computed property `voyadoProduct` that you can use to pass to the `CaToggleFavorite` component and to your `addToCart` function. It also provides a method `setVoyadoData` that you can use to set the product data from Voyado to the `voyadoProduct` property.
 
@@ -209,7 +209,7 @@ export default {
 </script>
 ```
 
-# VoyadoListPage
+### VoyadoListPage
 
 Should be used instead of MixListPage in your list page component. Either make a new one for Voyado lists or use it in CaListPage. It has basically the same set of functionality. Use pageReferance instead of currentPath and use VoyadoFilterPanel instead of CaFilterPanel.
 
