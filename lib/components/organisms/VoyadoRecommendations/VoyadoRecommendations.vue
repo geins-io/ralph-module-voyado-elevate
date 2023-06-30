@@ -80,7 +80,7 @@ export default {
             {
               productKey: this.productKey.trim(),
               presentCustom:
-                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions'
+                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions|ralph_data_product_images'
             },
             {
               productGroup: {
@@ -109,7 +109,7 @@ export default {
             {
               pageReference: '/',
               presentCustom:
-                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions'
+                'ralph_data|ralph_data_skus|ralph_data_variant_dimensions|ralph_data_product_images'
             },
             {
               recommendationLists: [
