@@ -15,6 +15,7 @@
   "scripts": {
     "dev": "nuxt test/fixture",
     "test": "jest",
+    "publish": "npm publish --access public",
     "test:unit": "jest --testRegex \"/test/unit/(.+)\\.test\\.js$\"",
     "test:system": "jest --testRegex \"/test/system/(.+)\\.test\\.js$\"",
     "test:coverage": "yarn test --coverage",
