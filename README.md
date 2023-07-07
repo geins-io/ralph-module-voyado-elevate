@@ -1,19 +1,25 @@
 [![NPM Package][npm]][npm-url]
 [![NPM Downloads][npm-downloads-per-month]][npm-trends]
+![Geins][mit-shield]
 
-# Voyado Elevate Module for Ralph
+[![Start Geins Free Trial][geins-tiral-img]][geins-tiral-url] [![Geins Docs][geins-docs-img]][geins-docs-url]
 
-> Component library for Voyado Elevate integrations with Ralph Storefront
+[![geins](https://raw.githubusercontent.com/geins-io/resources/master/images/banners/repos/voyado.jpg)](https://www.geins.io)
 
-We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/package/@apptus/esales-api) for API requests.
+# Voyado Elevate Module for module for Geins PWA Storefront
 
-> A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
+Module adding [Voyado Elevate features](https://voyado.com/products/product-discovery-engine/) in Geins PWA Storefront Ralph in seconds.
 
-## Requirements
 
-This package require Nuxt2 to be installed in your project. Also it requires @ralph/ralph-ui 20.0.0 or higher.
+## Pre-requisites
+
+- Voyado Elevate account. [Get an account here](https://voyado.com/products/product-discovery-engine/)
+- Geins Account and PWA Storefront Ralph. [Get a free trial here](https://www.geins.io)
+- Storefront with `@ralph/ralph-ui` 20.0.0 or higher.
 
 ## Installation
+
+### 1. Install the module
 
 To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it from npm using the following command:
 
@@ -22,7 +28,10 @@ To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it
 npm install @geins/ralph-module-voyado-elevate
 ```
 
-Once installed, you can add the module to your Nuxt2 app by updating the modules array in the nuxt.config.js file. You can then configure the module by adding options to the `@geins/ralph-module-voyado-elevate` object:
+
+### 2. Add the module to your Geins PWA Storefront Ralph
+
+Add the module to your `nuxt.config.js` file. Configure the module by adding options to the `@geins/ralph-module-voyado-elevate` object:
 
 ```javascript
 // nuxt.config.js
@@ -47,7 +56,9 @@ module.exports = {
 };
 ```
 
-After installing the module, make sure to add the `@apptus/esales-api` package to the transpile array so that it can be transpiled correctly. And add the configuration to support CommonJS files for `@apptus/esales-api` by pushing a new rule to the `config.module.rules` array in the `build.extend` method. Here's an example configuration:
+### 3. Transpile the module dependencies
+
+Add the `@apptus/esales-api` package to the transpile array so that it can be transpiled correctly. And add the configuration to support CommonJS files for `@apptus/esales-api` by pushing a new rule to the `config.module.rules` array in the `build.extend` method. Here's an example configuration:
 
 ```javascript
 // nuxt.config.js
@@ -255,44 +266,22 @@ Available translations:
 | VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                                       |
 | VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id or $algorithm (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
 
-> NOTE: Replace `<PIPE>` with the "|" character
+>NOTE: Replace `<PIPE>` with the "|" character
 
-## Development
+### Dependencies
+We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/package/@apptus/esales-api) for API requests.
 
-To contribute to this module, clone this repository and run the following commands:
+> A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
 
-```bash
-# Install dependencies
-npm install
 
-# Run development server with test fixture
-npm run dev
-
-# Run unit tests
-npm run test:unit
-
-# Run system tests
-npm run test:system
-
-# Run test coverage
-npm run test:coverage
-
-# Format code
-npm run format
-
-# Lint code
-npm run lint
-```
-
-## Commits
-
-We enforce [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) using [@commitlint/config-conventional](https://www.npmjs.com/package/@commitlint/config-conventional) combined with [@husky](https://www.npmjs.com/package/husky).
-
-## License
-
-MIT
 
 [npm]: https://img.shields.io/npm/v/@geins/ralph-module-voyado-elevate
 [npm-url]: https://www.npmjs.com/package/@geins/ralph-module-voyado-elevate
 [npm-downloads-per-month]: https://img.shields.io/npm/dm/@geins/ralph-module-voyado-elevate.svg
 [npm-trends]: https://npmtrends.com/@geins/ralph-module-voyado-elevate
+[geins-docs-url]: https://docs.geins.io
+[geins-docs-img]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/geins-io/resources/master/sheilds/geins-docs-read-v3.json
+[geins-tiral-url]: https://www.geins.io
+[geins-tiral-img]: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/geins-io/resources/master/sheilds/geins-fee-tiral.json
+[mit-shield]: https://img.shields.io/badge/license-MIT-green
+[mit-url]: https://en.wikipedia.org/wiki/MIT_License
