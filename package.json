@@ -1,6 +1,6 @@
 {
   "name": "@geins/ralph-module-voyado-elevate",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "Component library for Voyado Elevate integrations with Ralph Storefront",
   "author": {
     "name": "Geins"
