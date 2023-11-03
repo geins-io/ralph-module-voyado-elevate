@@ -10,7 +10,6 @@
 
 Module adding [Voyado Elevate features](https://voyado.com/products/product-discovery-engine/) in Geins PWA Storefront Ralph in seconds.
 
-
 ## Pre-requisites
 
 - Voyado Elevate account. [Get an account here](https://voyado.com/products/product-discovery-engine/)
@@ -27,7 +26,6 @@ To use the Ralph Module for Voyado Elevate in your Nuxt2 app, you can install it
 # Install the package using npm:
 npm install @geins/ralph-module-voyado-elevate
 ```
-
 
 ### 2. Add the module to your Geins PWA Storefront Ralph
 
@@ -146,13 +144,14 @@ export default {
 
 **Props**
 
-| Name          | Type   | Default | Description                                                             |
-| ------------- | ------ | ------- | ----------------------------------------------------------------------- |
-| configuration | Object | {}      | If used as widget, the widget configuration object                      |
-| productKey    | String | null    | If used on product page, the productKey matching your id in Voyado feed |
-| randomTitles  | Number | 0       | If used on product page, the number of random titles to show            |
-| limit         | Number | 8       | Number of products to fetch                                             |
-| productRules  | String | ''      | productRules to send to Voyado for product page recommendations         |
+| Name          | Type    | Default | Description                                                             |
+| ------------- | ------- | ------- | ----------------------------------------------------------------------- |
+| configuration | Object  | {}      | If used as widget, the widget configuration object                      |
+| productKey    | String  | null    | If used on product page, the productKey matching your id in Voyado feed |
+| randomTitles  | Number  | 0       | If used on product page, the number of random titles to show            |
+| limit         | Number  | 8       | Number of products to fetch                                             |
+| productRules  | String  | ''      | productRules to send to Voyado for product page recommendations         |
+| isExtended    | Boolean | false   | Set to true to display CaProductList instead of CaProductListSlider     |
 
 ### VoyadoFilterPanel
 
@@ -266,14 +265,13 @@ Available translations:
 | VOYADO_SEARCH_RESULTS_BUTTON            | `Show {hits} product | Show {hits} products`                                                                                                       |
 | VOYADO_RECOMMENDATIONS_TITLE(.....)     | Will append \_\$list-id or $algorithm (and also \_\$random-nr if randomTitles are mre than 0). For example `VOYADO_RECOMMENDATIONS_TITLE_UPSELL_1` |
 
->NOTE: Replace `<PIPE>` with the "|" character
+> NOTE: Replace `<PIPE>` with the "|" character
 
 ### Dependencies
+
 We use Voyado's helper library [@apptus/esales-api](https://www.npmjs.com/package/@apptus/esales-api) for API requests.
 
 > A helper library for making requests to the eSales 4 Storefront API v3. It includes type definitions for all HTTPS responses and the library API.
-
-
 
 [npm]: https://img.shields.io/npm/v/@geins/ralph-module-voyado-elevate
 [npm-url]: https://www.npmjs.com/package/@geins/ralph-module-voyado-elevate
