@@ -8,7 +8,14 @@
       <h3 class="voyado-recommendations__title">
         {{ getTitle(list.id) }}
       </h3>
+      <CaProductList
+        v-if="showAsRows"
+        class="voyado-recommendations__rows"
+        :products="list.products"
+        :page-size="limit"
+      />
       <CaProductListSlider
+        v-else
         class="voyado-recommendations__slider"
         :products="list.products"
         :page-size="limit"
@@ -46,6 +53,10 @@ export default {
     productRules: {
       type: String,
       default: ''
+    },
+    showAsRows: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
