@@ -9,7 +9,7 @@
         {{ getTitle(list.id) }}
       </h3>
       <CaProductList
-        v-if="isExtended"
+        v-if="showAsRows"
         class="voyado-recommendations__rows"
         :products="list.products"
         :page-size="limit"
@@ -54,7 +54,7 @@ export default {
       type: String,
       default: ''
     },
-    isExtended: {
+    showAsRows: {
       type: Boolean,
       default: false
     }

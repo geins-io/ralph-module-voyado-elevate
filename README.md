@@ -151,7 +151,7 @@ export default {
 | randomTitles  | Number  | 0       | If used on product page, the number of random titles to show            |
 | limit         | Number  | 8       | Number of products to fetch                                             |
 | productRules  | String  | ''      | productRules to send to Voyado for product page recommendations         |
-| isExtended    | Boolean | false   | Set to true to display CaProductList instead of CaProductListSlider     |
+| showAsRows    | Boolean | false   | Set to true to display CaProductList instead of CaProductListSlider     |
 
 ### VoyadoFilterPanel
 
