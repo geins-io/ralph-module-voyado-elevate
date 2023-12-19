@@ -111,6 +111,7 @@ export default {
     async fetchResults() {
       try {
         const results = await this.voyado.api.query.autocomplete({
+          presentCustom: 'ralph_data',
           q: this.searchQuery
         });
 
@@ -135,9 +136,20 @@ export default {
     },
     setProductSuggestions(suggestionGroups) {
       const products = [];
+
       suggestionGroups.forEach(group => {
-        // Push first product of every suggestion group
-        products.push(group.products[0]);
+        const product = group.products[0];
+        let data = {};
+
+        try {
+          data = JSON.parse(product.custom.ralph_data[0].label).json;
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+        }
+
+        const discountType = data?.discountType;
+        products.push({ ...product, discountType });
       });
       this.$emit('update:products', products);
     },
