@@ -34,7 +34,13 @@
             alt="placeholder"
           />
           <div class="voyado-search-product-results__info">
-            <div class="ca-price">
+            <div
+              class="ca-price"
+              :class="{
+                'ca-price--product-sale': product.discountType === 'SALE_PRICE',
+                'ca-price--campaign': product.discountType === 'PRICE_CAMPAIGN'
+              }"
+            >
               <span class="ca-price__selling">
                 {{ formatCurrency(product.sellingPrice.min) }}
               </span>
