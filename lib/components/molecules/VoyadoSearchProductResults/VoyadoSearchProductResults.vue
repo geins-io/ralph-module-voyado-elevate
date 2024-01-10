@@ -41,6 +41,12 @@
                 'ca-price--campaign': product.discountType === 'PRICE_CAMPAIGN'
               }"
             >
+              <span
+                v-if="product.discountType !== 'NONE'"
+                class="ca-price__regular"
+              >
+                {{ formatCurrency(product.listPrice.min) }}
+              </span>
               <span class="ca-price__selling">
                 {{ formatCurrency(product.sellingPrice.min) }}
               </span>
