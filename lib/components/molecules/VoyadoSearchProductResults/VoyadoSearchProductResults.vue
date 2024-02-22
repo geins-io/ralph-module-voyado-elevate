@@ -45,10 +45,10 @@
                 v-if="product.discountType !== 'NONE'"
                 class="ca-price__regular"
               >
-                {{ formatCurrency(product.listPrice.min) }}
+                {{ formatCurrency(product.lowestPrice.comparisonPriceIncVat) }}
               </span>
               <span class="ca-price__selling">
-                {{ formatCurrency(product.sellingPrice.min) }}
+                {{ formatCurrency(product.lowestPrice.sellingPriceIncVat) }}
               </span>
             </div>
             <CaBrandAndName

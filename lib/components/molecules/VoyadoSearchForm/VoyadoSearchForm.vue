@@ -149,8 +149,10 @@ export default {
         }
 
         const discountType = data?.discountType;
-        products.push({ ...product, discountType });
+        const lowestPrice = data?.lowestPrice;
+        products.push({ ...product, discountType, lowestPrice });
       });
+
       this.$emit('update:products', products);
     },
     onFocus() {
