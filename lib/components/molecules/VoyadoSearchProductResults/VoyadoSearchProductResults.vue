@@ -42,12 +42,12 @@
               }"
             >
               <span
-                v-if="product.discountType !== 'NONE'"
+                v-if="product.discountType !== 'NONE' && product.lowestPrice"
                 class="ca-price__regular"
               >
                 {{ formatCurrency(product.lowestPrice.comparisonPriceIncVat) }}
               </span>
-              <span class="ca-price__selling">
+              <span v-if="product.lowestPrice" class="ca-price__selling">
                 {{ formatCurrency(product.lowestPrice.sellingPriceIncVat) }}
               </span>
             </div>
