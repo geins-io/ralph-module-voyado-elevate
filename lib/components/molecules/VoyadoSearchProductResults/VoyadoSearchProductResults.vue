@@ -45,10 +45,11 @@
                 v-if="product.discountType !== 'NONE'"
                 class="ca-price__regular"
               >
-                {{ formatCurrency(product.lowestPrice.comparisonPriceIncVat) }}
+                {{ formatCurrency(regularPrice(product)) }}
               </span>
+
               <span class="ca-price__selling">
-                {{ formatCurrency(product.lowestPrice.sellingPriceIncVat) }}
+                {{ formatCurrency(sellingPrice(product)) }}
               </span>
             </div>
             <CaBrandAndName
@@ -85,6 +86,16 @@ export default {
         type: 'search:click',
         data: { type: 'product', data: product }
       });
+    },
+    regularPrice(product) {
+      return (
+        product?.lowestPrice?.comparisonPriceIncVat || product?.listPrice.min
+      );
+    },
+    sellingPrice(product) {
+      return (
+        product?.lowestPrice?.sellingPriceIncVat || product?.sellingPrice.min
+      );
     }
   }
 };
